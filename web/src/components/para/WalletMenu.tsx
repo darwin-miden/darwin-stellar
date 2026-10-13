@@ -61,7 +61,7 @@ export function WalletMenu({
           aria-busy={pending === w.id}
           onClick={() => onPick(w.id)}
         >
-          <img src={w.icon} alt="" width={36} height={36} className="wm-icon" />
+          <img src={w.icon} alt="" width={24} height={24} className="wm-icon" />
           <span className="wm-name">{w.name}</span>
           {pending === w.id && <span className="wm-spin toast-spin" aria-hidden />}
         </button>
@@ -71,7 +71,6 @@ export function WalletMenu({
           No Stellar wallet found. Get Freighter →
         </a>
       )}
-      <div className="wm-foot">Switch the wallet to testnet.</div>
     </div>
   );
 }

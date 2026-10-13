@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // End-to-end check of the live testnet deployment. No mocks: fresh accounts funded by friendbot,
-// real signatures, real Reflector prices. For every basket it buys, checks every number the
+// real Circle USDC (swapped from XLM on the testnet pool), real signatures, real Reflector prices. For every basket it buys, checks every number the
 // contracts promise (fees, spread, backing invariant, reserve accounting, one tx = every leg),
 // tries the attacks / mistakes that must revert, then sells everything back.
 //
@@ -11,6 +11,8 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+
+import { CIRCLE, freshUsdcAccount } from "./circle.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const require = createRequire(join(ROOT, "web/package.json"));
@@ -118,7 +120,8 @@ const close = (x, y, tolBps) => {
 
 async function checkWiring() {
   console.log("\n[1] Deployment wiring");
-  check((await read(D.market, "usdc")) === D.usdc, "market settles in the deployed USDC");
+  check(D.usdc === CIRCLE.sac && (await read(D.usdc, "name")) === `USDC:${CIRCLE.issuer}`, "settles in Circle's USDC (its Stellar Asset Contract)");
+  check((await read(D.market, "usdc")) === D.usdc, "market settles in that USDC");
   check((await read(D.market, "oracle")) === D.oracle, "market prices through the Darwin oracle");
   for (const [s, asset] of Object.entries(D.assets)) {
     const admin = await read(asset.id, "admin");
@@ -273,15 +276,11 @@ console.log(`Darwin on Stellar — e2e on ${D.network} (deployed ${D.deployedAt}
 await checkWiring();
 await checkOracle();
 
-console.log("\n[3] Accounts + faucet");
-const alice = await fresh("alice (trader)");
+console.log("\n[3] Accounts");
+const { kp: alice, got } = await freshUsdcAccount(1000);
+console.log(`  alice (trader): ${alice.publicKey()}  (USDC trustline + 1,000 XLM swapped for ${got} USDC)`);
 const bob = await fresh("bob (attacker)");
-const f = await send(alice, D.usdc, "faucet", [a(alice.publicKey())]);
-check(BigInt(f.value) === 1000n * USDC_ONE && (await bal(D.usdc, alice.publicKey())) === 1000n * USDC_ONE, "faucet: 1,000 test USDC");
-const again = await mustFail(alice, D.usdc, "faucet", [a(alice.publicKey())], "#6");
-check(again.failed, "second claim within the hour reverts (cooldown)", again.msg);
-const noAuth = await mustFail(bob, D.usdc, "mint", [a(bob.publicKey()), i(1_000_000n * USDC_ONE)]);
-check(noAuth.failed, "nobody but the admin can mint USDC", noAuth.msg);
+check((await bal(D.usdc, alice.publicKey())) > 800n * USDC_ONE, "alice holds real Circle USDC");
 const legMint = await mustFail(bob, D.assets.BTC.id, "mint", [a(bob.publicKey()), i(10n ** 12n)]);
 check(legMint.failed, "nobody but the market can mint a constituent", legMint.msg);
 

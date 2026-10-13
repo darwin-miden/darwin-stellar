@@ -93,7 +93,9 @@ export function App() {
   }, []);
   usePanelScroll(openSymbol);
 
+  const [choosing, setChoosing] = useState<ConnectMethod | null>(null);
   async function choose(m: ConnectMethod) {
+    setChoosing(m);
     try {
       await connect(m);
       setConnectOpen(false);
@@ -101,6 +103,8 @@ export function App() {
     } catch (e) {
       const msg = String((e as Error)?.message ?? e);
       if (!/closed|cancel|reject/i.test(msg)) toast.push({ type: "error", title: "Couldn't connect", message: msg });
+    } finally {
+      setChoosing(null);
     }
   }
 
@@ -184,7 +188,7 @@ export function App() {
             </span>
             <span className="cx-body">
               <span className="cx-title" style={{ display: "block" }}>
-                Connect a Stellar wallet
+                {connecting && choosing === "kit" ? "Waiting for your wallet…" : "Connect a Stellar wallet"}
               </span>
               <span className="cx-sub" style={{ display: "block" }}>
                 Freighter, xBull, Lobstr, Albedo, Hana, Rabet…
@@ -199,7 +203,7 @@ export function App() {
             </span>
             <span className="cx-body">
               <span className="cx-title" style={{ display: "block" }}>
-                {connecting ? "Connecting…" : "Try with a demo wallet"}
+                {connecting && choosing === "demo" ? "Connecting…" : "Try with a demo wallet"}
               </span>
               <span className="cx-sub" style={{ display: "block" }}>
                 Instant testnet account in your browser, no extension

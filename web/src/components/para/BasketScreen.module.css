@@ -1,0 +1,349 @@
+/*
+ * The basket screen: identity, chart, composition, and the rail that carries the trade card
+ * and the other baskets. Tokens come from `.darwin-ui` (darwin-ui.css), which the screen wraps
+ * itself in, so this sits in the same design language as the hero and the basket tiles rather
+ * than inventing a second one.
+ */
+
+/* ── shared cards ─────────────────────────────────────────────────────────── */
+
+.card {
+  background: var(--pane);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-hero);
+  padding: 18px;
+  min-width: 0;
+}
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.cardTitle {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* identity: logos, name, symbol */
+.identity {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.names {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.names strong {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.names small {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+.identity[data-compact="true"] .names strong {
+  font-size: 19px;
+}
+
+/* the NAV readout that sits opposite the identity */
+.quote {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex: none;
+}
+.quoteValue {
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+.quoteMeta {
+  font-size: 12.5px;
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.quote[data-compact="true"] .quoteValue {
+  font-size: 22px;
+}
+
+.tagline {
+  margin-top: 10px;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  max-width: 62ch;
+}
+
+/* range switch over the chart */
+.ranges {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  border-radius: var(--radius-round);
+  background: var(--color-bg-elevated);
+}
+.range {
+  appearance: none;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  padding: 5px 11px;
+  border-radius: var(--radius-round);
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.range:hover {
+  color: var(--color-text-primary);
+}
+.range[data-on="true"] {
+  background: var(--pane);
+  color: var(--color-text-primary);
+  box-shadow: 0 1px 2px #19191814;
+}
+
+/* composition: the treemap, then one row per constituent */
+.treemap {
+  height: 150px;
+  border-radius: var(--radius-l);
+  overflow: hidden;
+}
+.legs {
+  list-style: none;
+  margin-top: 14px;
+}
+.leg {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 0;
+  border-top: 1px solid var(--color-border-hair);
+  font-size: 13.5px;
+}
+.leg:first-child {
+  border-top: 0;
+}
+.legName {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+.legName span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.legPrice {
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+.legWeight {
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  min-width: 52px;
+  text-align: right;
+}
+
+/* small facts strip (TVL / assets / since launch) */
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  gap: 1px;
+  background: var(--color-border-hair);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-hero);
+  overflow: hidden;
+}
+.fact {
+  background: var(--pane);
+  padding: 13px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.factLabel {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.factValue {
+  font-size: 16px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── A · full screen ──────────────────────────────────────────────────────── */
+
+.page {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: clamp(18px, 3vh, 30px) 48px clamp(28px, 5vh, 56px);
+  animation: screenIn var(--dur-med) var(--ease-out);
+}
+.back {
+  appearance: none;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 10px 6px 6px;
+  margin-bottom: 14px;
+  border-radius: var(--radius-m);
+  transition: color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
+}
+.back:hover {
+  color: var(--color-text-primary);
+  background: var(--color-bg-elevated);
+}
+.pageHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 372px;
+  gap: 20px;
+  align-items: start;
+  margin-top: 24px;
+}
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.rail {
+  position: sticky;
+  top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+@media (max-width: 1080px) {
+  .page {
+    padding-inline: 24px;
+  }
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .rail {
+    position: static;
+  }
+}
+@keyframes screenIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page {
+    animation: none;
+  }
+}
+
+/* ── the other baskets, listed in the rail under the trade card ───────────── */
+
+/* A · rail — a list in the right column, under the trade card */
+.railList {
+  display: flex;
+  flex-direction: column;
+}
+.railRow {
+  appearance: none;
+  border: 0;
+  border-top: 1px solid var(--color-border-hair);
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 6px;
+  margin-inline: -6px;
+  border-radius: var(--radius-m);
+  text-align: left;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.railRow:first-child {
+  border-top: 0;
+}
+.railRow:hover {
+  background: var(--color-bg-subtle);
+}
+.railName {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.railName strong {
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.railName small {
+  font-size: 11.5px;
+  color: var(--color-text-muted);
+}
+.railValue {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+  font-variant-numeric: tabular-nums;
+}
+.railValue strong {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.railValue small {
+  font-size: 11.5px;
+}
+
+/* The index is a simulation; saying so is not optional once real money is involved. */
+.footnote {
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+  max-width: 74ch;
+  padding: 0 2px;
+}

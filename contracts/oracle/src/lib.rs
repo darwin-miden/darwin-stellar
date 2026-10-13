@@ -10,7 +10,7 @@
 //! All prices come out in USD with 14 decimals (Reflector's native precision).
 
 use soroban_sdk::{
-    contract, contractclient, contracterror, contractimpl, contracttype, panic_with_error, Address, Env, Symbol,
+    contract, contractclient, contracterror, contractimpl, contracttype, panic_with_error, Address, BytesN, ContractExecutable, Env, Symbol,
 };
 
 pub const PRICE_DECIMALS: u32 = 14;
@@ -127,6 +127,16 @@ impl Oracle {
 
     pub fn admin(e: Env) -> Address {
         e.storage().instance().get(&DataKey::Admin).unwrap()
+    }
+
+    pub fn set_admin(e: Env, new_admin: Address) {
+        Self::admin(e.clone()).require_auth();
+        e.storage().instance().set(&DataKey::Admin, &new_admin);
+    }
+
+    pub fn upgrade(e: Env, wasm_hash: BytesN<32>) {
+        Self::admin(e.clone()).require_auth();
+        e.deployer().update_current_contract(ContractExecutable::Wasm(wasm_hash));
     }
 
     pub fn set_feed(e: Env, token: Address, feed: Feed) {

@@ -270,3 +270,22 @@ fn only_the_holder_can_sell_and_only_the_admin_sets_fees() {
     assert!(b.try_buy(&alice, &ONE, &0).is_err(), "no signature from alice");
     assert!(b.try_set_fees(&0, &0, &alice).is_err());
 }
+
+#[test]
+fn buys_and_sells_emit_events() {
+    use soroban_sdk::{testutils::Events as _, Event};
+    let w = world();
+    let b = BasketClient::new(&w.e, &w.basket);
+    let alice = Address::generate(&w.e);
+    TClient::new(&w.e, &w.usdc).faucet(&alice);
+    let shares = b.buy(&alice, &(100 * ONE), &0);
+    let bought = Bought { user: alice.clone(), usdc_in: 100 * ONE, fee: 100 * ONE * 30 / 10_000, shares };
+    assert_eq!(w.e.events().all().filter_by_contract(&w.basket), [bought.to_xdr(&w.e, &w.basket)]);
+    let u = TClient::new(&w.e, &w.usdc);
+    let fees_before = u.balance(&w.admin);
+    let usdc_out = b.sell(&alice, &shares, &0);
+    let evs = w.e.events().all().filter_by_contract(&w.basket);
+    let sold = Sold { user: alice.clone(), shares, fee: u.balance(&w.admin) - fees_before, usdc_out };
+    assert_eq!(evs, [sold.to_xdr(&w.e, &w.basket)]);
+    assert_eq!(TClient::new(&w.e, &w.usdc).balance(&alice), 900 * ONE + usdc_out);
+}

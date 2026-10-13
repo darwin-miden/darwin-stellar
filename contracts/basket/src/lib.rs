@@ -12,7 +12,7 @@
 //! scarcest leg (rounded down) and redemptions are pro-rata (rounded down).
 
 use soroban_sdk::{
-    contract, contractclient, contracterror, contractimpl, contracttype, panic_with_error, token::TokenClient,
+    contract, contractclient, contracterror, contractevent, contractimpl, contracttype, panic_with_error, token::TokenClient,
     Address, Env, String, Vec,
 };
 
@@ -48,6 +48,26 @@ pub enum Error {
     Slippage = 3,
     NoSupply = 4,
     FeeTooHigh = 5,
+}
+
+/// A buy: `usdc_in` spent (fee included), `shares` minted to `user`.
+#[contractevent]
+pub struct Bought {
+    #[topic]
+    pub user: Address,
+    pub usdc_in: i128,
+    pub fee: i128,
+    pub shares: i128,
+}
+
+/// A sell: `shares` burnt, `usdc_out` paid to `user` (fee already taken).
+#[contractevent]
+pub struct Sold {
+    #[topic]
+    pub user: Address,
+    pub shares: i128,
+    pub fee: i128,
+    pub usdc_out: i128,
 }
 
 #[contracttype]
@@ -281,6 +301,7 @@ impl Basket {
             panic_with_error!(&e, Error::Slippage);
         }
         SharesClient::new(&e, &c.shares).mint(&user, &shares);
+        Bought { user, usdc_in, fee, shares }.publish(&e);
         shares
     }
 
@@ -320,6 +341,7 @@ impl Basket {
             panic_with_error!(&e, Error::Slippage);
         }
         usdc.transfer(&me, &user, &out);
+        Sold { user, shares, fee, usdc_out: out }.publish(&e);
         out
     }
 }

@@ -1,6 +1,6 @@
 # Darwin on Stellar
 
-**One token, a whole strategy.** Darwin baskets are tokens backed by fixed units of tokenized real-world assets and crypto on Stellar: US and euro T-bills, UK gilts, Mexican CETES, Brazilian Tesouro, gold, BTC, ETH, XLM. Spend USDC once and the vault buys every constituent in **a single Soroban transaction**. Sell, and you get your pro-rata slice of every leg back as USDC.
+**One token, a whole strategy.** Darwin baskets are tokens backed by fixed units of tokenized real-world assets and crypto on Stellar: US and euro T-bills, UK gilts, Mexican CETES, Brazilian Tesouro, gold, BTC, ETH, XLM. Spend USDC (the official Circle USDC) once and the vault buys every constituent in **a single Soroban transaction**. Sell, and you get your pro-rata slice of every leg back as USDC.
 
 Prices are read **on-chain from [Reflector](https://reflector.network)** (SEP-40): crypto from the CEX/DEX feed, FX + gold from the fiat feed. Tokenized bills and bonds are priced as `FX rate × accrued yield index`, which is how a stablebond actually behaves.
 
@@ -47,7 +47,7 @@ The constituents mirror assets that are live on Stellar mainnet (Ondo USDY, Fran
 | `basket` | The vault. `buy(user, usdc_in, min_shares)`: splits USDC across legs by live value, buys each leg on the market, mints shares on the scarcest leg (rounded down). `sell(user, shares, min_usdc)`: burns shares, sells the pro-rata slice of every leg (rounded down). `nav()`: NAV/share, TVL, supply, prices, holdings, live weights in one read. The admin can pause new buys (sells always stay open). Emits `Bought` / `Sold`. |
 | `oracle` | Darwin price adapter over Reflector. Per-token feed: Reflector asset or fixed USD reference, plus a yield accrual (`apy_bps` since `t0`). Rejects stale prices (> 1h). USD, 14 decimals. |
 | `market` | Testnet liquidity: issues and burns constituents against USDC at the oracle price with a 10 bps spread. Settles on the delta over its tracked reserve, so the vault just transfers then calls, without nested auth. On mainnet this leg routes to real venues (Stellar DEX path payments, Soroswap, Aquarius) for the issuers' actual assets. |
-| `token` | SEP-41 token used for shares, constituents and test USDC (with a public 1,000 USDC / hour faucet). |
+| `token` | SEP-41 token used for basket shares and constituents. USDC is Circle's own, through its Stellar Asset Contract. |
 
 **Backing invariant:** `holdings[i] ≥ units[i] × supply / 1e7` for every leg, by construction (mint rounds down on the scarcest leg, redeem is pro-rata, rounded down).
 
@@ -64,13 +64,13 @@ The constituents mirror assets that are live on Stellar mainnet (Ondo USDY, Fran
 
 | Contract | Address |
 | --- | --- |
-| Test USDC | [`CBOOGYIG…YBJQ54`](https://stellar.expert/explorer/testnet/contract/CBOOGYIGZYSJMBU5I6RCDZ3VLRBCEHNWAYM3ZRXPFGVUXOBXSBYBJQ54) |
-| Oracle | [`CDZUGO3C…GJQZ4O`](https://stellar.expert/explorer/testnet/contract/CDZUGO3CVERPKFFGQMOV4V2JMRN2KW3QCRAPTOWJXJSHTZDXU7GJQZ4O) |
-| Market | [`CDGRAYOW…C2WNXS`](https://stellar.expert/explorer/testnet/contract/CDGRAYOW7GU3NQRB2OCGTQWOZ74DVXQG6PRXFPHLWBXHJA36DAC2WNXS) |
-| DXTB vault | [`CD2HKGKT…JJJ3SH`](https://stellar.expert/explorer/testnet/contract/CD2HKGKT6H3SI7NBKL3HQUWIONLUBE5CVRZDXXP2CLIIOIBIQTJJJ3SH) |
-| DXEM vault | [`CDI22FRB…2LAYNP`](https://stellar.expert/explorer/testnet/contract/CDI22FRBZJAFUITLKKY6ZQEADNQT5PVYGI2RU46G6KEJNXTVAF2LAYNP) |
-| DXBC vault | [`CDMAVGRU…DISKWC`](https://stellar.expert/explorer/testnet/contract/CDMAVGRUJOLW6FSWD2LNVNU36K5T6WUC5DM7PFRTGJIPXW6224DISKWC) |
-| DXAW vault | [`CDGARSXJ…LWAPNY`](https://stellar.expert/explorer/testnet/contract/CDGARSXJHM3WJDVRMFCHWPVDRAL6FRCYQKU2FY5TUWY5DAQTCULWAPNY) |
+| USDC (Circle, SAC) | [`CBIELTK6…XQDAMA`](https://stellar.expert/explorer/testnet/contract/CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA) |
+| Oracle | [`CBPRZCN5…EKEOGU`](https://stellar.expert/explorer/testnet/contract/CBPRZCN5KOILNH4LN54JXZ737HKAOKVK534YM3IE5N643FQYX7EKEOGU) |
+| Market | [`CCUFULJ3…TNDD2A`](https://stellar.expert/explorer/testnet/contract/CCUFULJ34BGO2DQOGHZLNEWRIWIWMR425JG5PHAVQYLKUFVGE3TNDD2A) |
+| DXTB vault | [`CDHGLEDZ…ONCS3D`](https://stellar.expert/explorer/testnet/contract/CDHGLEDZM6OC6OIQU6HY77TEA6GPZ6F2PBTPLFKRVRK6TSYAIKONCS3D) |
+| DXEM vault | [`CD32W5DZ…V2DVZI`](https://stellar.expert/explorer/testnet/contract/CD32W5DZILHE57FGUE4MFEMKHTSGXCEPB4SARKJOJCAGFX7CAWV2DVZI) |
+| DXBC vault | [`CB2X3TUX…OT7YHB`](https://stellar.expert/explorer/testnet/contract/CB2X3TUXEHOQ4NIN4YQVMITVCTGRWEOWTWSFQLGQTUVVJQXOIFOT7YHB) |
+| DXAW vault | [`CD2PRGK2…2VQ35K`](https://stellar.expert/explorer/testnet/contract/CD2PRGK2DBWTQ5GYXDD47ZVL4ETJ2ATILPY6MZTVXKEB3TOLLQ2VQ35K) |
 
 Every address (constituents, share tokens, units per share, launch prices): [`deployments/testnet.json`](deployments/testnet.json).
 
@@ -91,7 +91,7 @@ cd contracts && cargo test && stellar contract build
 
 # deploy everything to testnet (needs a funded identity, default `darwin-stellar-admin`)
 stellar keys generate darwin-stellar-admin --network testnet --fund
-node scripts/deploy.mjs      # writes deployments/testnet.json + web/src/config/testnet.json
+node scripts/deploy.mjs      # seeds the market with Circle USDC, writes deployments/ + web/src/config/
 
 # app
 cd web && npm install && npm run dev   # http://localhost:3050/stellar
@@ -99,15 +99,15 @@ cd web && npm install && npm run dev   # http://localhost:3050/stellar
 
 The index charts draw each constituent's history (Yahoo: BTC-USD, GC=F, EURUSD=X, MXNUSD=X…, served by `/api/history`) × the instrument's yield index, exactly as the oracle prices it on-chain.
 
-In the app, connect any Stellar wallet (Freighter, xBull, Lobstr, Albedo, Hana, Rabet… through the Stellar Wallets Kit) or **try with a demo wallet** (an in-browser testnet key, funded by friendbot). Then open Deposit → *Claim 1,000 test USDC* and buy a basket.
+In the app, connect any Stellar wallet (Freighter, xBull, Lobstr, Albedo, Hana, Rabet… through the Stellar Wallets Kit) or **try with a demo wallet** (an in-browser testnet key, funded by friendbot). Then open the **Faucet** tab: add the USDC trustline, and get Circle USDC from faucet.circle.com (20 every 2 hours) or swap testnet XLM for it in one click. Then buy a basket.
 
 ## End-to-end check
 
-`node scripts/e2e.mjs` runs against the live testnet deployment: fresh accounts from friendbot, real signatures, real Reflector prices. 124 checks, all green:
+`node scripts/e2e.mjs` runs against the live testnet deployment: fresh accounts from friendbot, real Circle USDC (a USDC trustline, then XLM swapped on the testnet XLM/USDC pool), real signatures, real Reflector prices. 123 checks, all green:
 
 - **Wiring**: every constituent's admin is the market and it is listed; every share token's admin is its vault; fees are 30 / 20 bps.
 - **Oracle**: each price equals the Reflector feed (or the fixed reference) × its yield index, and the feed is fresh.
-- **Faucet + permissions**: 1,000 USDC claim, hourly cooldown, nobody else can mint USDC or a constituent.
+- **USDC + permissions**: the stack settles in Circle's USDC contract; nobody but the market can mint a constituent.
 - **Per basket** (buy 200 USDC, sell 50%, sell the rest): the minted amount equals the dry-run quote and `200 × (1−0.30%) × (1−0.10%) / NAV`; **one transaction mints every leg into the vault** (read from the tx events); exactly 0.60 USDC fee and +199.40 USDC market reserve; the backing invariant holds on every leg; NAV is unchanged by a trade; a min-out above the quote reverts; a third party can't sell someone else's shares; the vault emits `Bought` / `Sold` with the exact amounts; while the admin pauses a basket new buys revert, sells still go through, and nobody else can unpause; overselling reverts; the round trip costs 69 bps (30 + 20 fees, 10 + 10 spread).
 
 ## Roadmap

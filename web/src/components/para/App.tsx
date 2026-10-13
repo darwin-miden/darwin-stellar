@@ -23,8 +23,6 @@ import { AgamaNavbar, NAV_ACTION_WIDTH, NavPillButton, NetworkPill, SigningInPil
 import AnimatedButton from "./AnimatedButton";
 import { BasketScreen } from "./BasketScreen";
 import { BUY_FEE_BPS, BasketTradePanel } from "./BasketTradePanel";
-import { DepositPanel } from "./DepositPanel";
-import { Overlay } from "./Overlay";
 import { PortfolioTab } from "./PortfolioTab";
 import { useToast } from "./Toast";
 import { TradeCard } from "./TradeCard";
@@ -45,7 +43,6 @@ export function App() {
   const [tab, setTab] = useState<Tab>("Baskets");
   const [connectOpen, setConnectOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
-  const [depositOpen, setDepositOpen] = useState(false);
   const [openSymbol, setOpenSymbol] = useState<string | null>(() =>
     typeof window === "undefined" ? null : knownSymbol(new URLSearchParams(window.location.search).get("b")),
   );
@@ -140,7 +137,7 @@ export function App() {
       {tab === "Baskets" && openSymbol && (
         <BasketScreen symbol={openSymbol} name={nameOf(openSymbol)} onClose={() => setOpenSymbol(null)} onOpen={setOpenSymbol}>
           {address ? (
-            <BasketTradePanel key={openSymbol} symbol={openSymbol} name={nameOf(openSymbol)} onDeposit={() => setDepositOpen(true)} />
+            <BasketTradePanel key={openSymbol} symbol={openSymbol} name={nameOf(openSymbol)} onDeposit={() => setTab("Faucet")} />
           ) : (
             <PreConnectCard key={openSymbol} name={nameOf(openSymbol)} symbol={openSymbol} onConnect={() => setConnectOpen(true)} />
           )}
@@ -166,11 +163,6 @@ export function App() {
 
       {tab === "Activity" && (address ? <ActivityTab accountId={address} /> : <ConnectPrompt tab="Activity" onConnect={() => setConnectOpen(true)} />)}
 
-      {depositOpen && address && (
-        <Overlay onClose={() => setDepositOpen(false)}>
-          <DepositPanel onClose={() => setDepositOpen(false)} />
-        </Overlay>
-      )}
     </AgamaFrame>
   );
 }

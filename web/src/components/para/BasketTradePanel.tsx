@@ -204,7 +204,7 @@ export function BasketTradePanel({ symbol, name, onDeposit }: { symbol: string; 
       notes={
         <>
           {balLoading && <p className={tc.note}>Loading your balance…</p>}
-          {needsFunds && <p className={tc.note}>You hold no USDC yet, and that is what buys a basket. Claiming test USDC takes a few seconds.</p>}
+          {needsFunds && <p className={tc.note}>You hold no USDC yet, and that is what buys a basket. The Faucet tab gets you real Circle USDC in a minute.</p>}
         </>
       }
       cta={cta}

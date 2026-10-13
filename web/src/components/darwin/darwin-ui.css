@@ -1,0 +1,198 @@
+/*
+ * Design tokens and base classes the Darwin hero + basket tiles were built against,
+ * scoped to `.darwin-ui` so they land exactly as designed without touching the rest
+ * of the app's styling.
+ */
+
+/* The front's reset (`* { box-sizing: border-box; margin: 0; padding: 0 }`), which its
+   components assume -- without it the browser defaults leak in (a <figure> keeps its
+   40px side margins, headings their margins). `:where()` keeps it at zero specificity
+   so every component rule still wins. */
+:where(.darwin-ui),
+:where(.darwin-ui *) {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+.darwin-ui {
+  --pane: #fff;
+  --ink: #191918;
+  --ink-hover: #33332f;
+  --on-ink: #fff;
+  --on-ink-faint: #ffffff8c;
+
+  --color-text-primary: #191918;
+  --color-text-secondary: #71716b;
+  --color-text-muted: #8b8b85;
+  --color-text-faint: #a3a39c;
+  --color-text-on-action: #fff;
+
+  --color-bg-subtle: #fbfaf8;
+  --color-bg-elevated: #f0efe9;
+  --color-bg-track: #e4e3dd;
+  --color-border-default: #e1e0da;
+  --color-border-hair: #ecebe6;
+  --color-border-hover: #b9b8b1;
+  --color-focus: #7ba5d8;
+
+  --color-status-positive: #2f7d5c;
+  --color-status-negative: #bf3b30;
+  --asset-color-neutral: #dfe1df;
+  --skeleton: #e5e4df;
+
+  --radius-s: 6px;
+  --radius-m: 8px;
+  --radius-l: 10px;
+  --radius-xl: 12px;
+  --radius-hero: 14px;
+  --radius-round: 999px;
+  --control-h: 40px;
+  --card-gap: 16px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-24: 24px;
+  --tracking-label: 0.08em;
+
+  --shadow-card: 0 12px 32px #19191814;
+  --dur-fast: 0.12s;
+  --dur-med: 0.2s;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* The front's <body> typography, which every component's sizing was measured against. */
+  color: var(--color-text-primary);
+  font-family: var(--font-instrument-sans), var(--font-sans-stack), system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+:where(.darwin-ui) .t-hero {
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  font-size: clamp(38px, 5.2vw, 60px);
+  font-weight: 600;
+  line-height: 1.02;
+}
+:where(.darwin-ui) .t-h2 {
+  letter-spacing: -0.02em;
+  font-size: clamp(22px, 2.2vw, 26px);
+  font-weight: 600;
+  line-height: 1.15;
+}
+:where(.darwin-ui) .t-lead {
+  /* No colour here: the hero paints its own lead white over the gradient. */
+  font-size: 17px;
+  line-height: 1.55;
+}
+:where(.darwin-ui) .num {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+:where(.darwin-ui) .c-muted {
+  color: var(--color-text-muted);
+}
+:where(.darwin-ui) .c-positive {
+  color: var(--color-status-positive);
+}
+:where(.darwin-ui) .c-negative {
+  color: var(--color-status-negative);
+}
+
+/* Same specificity as the front's own `.btn`; the app also has one (mono, uppercase,
+   bordered), so the first three declarations undo what it would otherwise impose. */
+:where(.darwin-ui) .btn {
+  text-transform: none;
+  letter-spacing: normal;
+  display: inline-flex;
+  flex: none;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  height: var(--control-h);
+  padding: 0 16px;
+  border: 0;
+  border-radius: var(--radius-m);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+}
+:where(.darwin-ui) .btn-lg {
+  height: 46px;
+  padding: 0 22px;
+  border-radius: var(--radius-l);
+  font-size: 14px;
+}
+:where(.darwin-ui) .btn-ink {
+  background: var(--ink);
+  color: var(--on-ink);
+}
+:where(.darwin-ui) .btn-ink:hover:not(:disabled) {
+  background: var(--ink-hover);
+}
+/* No hover lift. Both variants already change colour on hover, and a button that drifts
+   upward under the cursor reads as unstable — it moves away from the thing you aimed at. */
+:where(.darwin-ui) .btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+:where(.darwin-ui) .btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+:where(.darwin-ui) .slogo {
+  flex: none;
+  object-fit: contain;
+  border: 1px solid var(--color-border-hair);
+  border-radius: 50%;
+  background: #fff;
+}
+:where(.darwin-ui) .slogo-fb {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-elevated);
+  color: var(--color-text-muted);
+  font-weight: 700;
+}
+:where(.darwin-ui) .stack {
+  display: flex;
+  flex: none;
+}
+:where(.darwin-ui) .stack > * {
+  margin-left: calc(-1 * var(--overlap, 8px));
+  border: 2px solid var(--pane);
+}
+:where(.darwin-ui) .stack > :first-child {
+  margin-left: 0;
+}
+
+:where(.darwin-ui) .sk {
+  display: block;
+  border-radius: var(--radius-s);
+  background: linear-gradient(100deg, var(--skeleton) 40%, var(--color-bg-elevated) 50%, var(--skeleton) 60%);
+  background-size: 200% 100%;
+  animation: 1.6s linear infinite darwin-shimmer;
+}
+@keyframes darwin-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* Cards open a panel here instead of a page, so they render as <button>; a button centres
+   its text, which a link does not. */
+:where(.darwin-ui) button {
+  text-align: inherit;
+}
+
+/* The app paints bare <footer> elements dark; the tiles use one for their stats line.
+   Element-level, like the app's own `footer` rule, so it cancels it -- but still below
+   the tiles' own `.foot` class, which sets its border and top padding. */
+:where(.darwin-ui) footer {
+  background: none;
+  color: inherit;
+  padding: 0;
+}

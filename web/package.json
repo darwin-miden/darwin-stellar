@@ -1,0 +1,35 @@
+{
+  "name": "darwin-stellar-web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Darwin on Stellar: buy a whole basket of tokenized assets with USDC in one transaction.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev -p 3050",
+    "build": "next build",
+    "start": "next start -p 3050",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@creit.tech/stellar-wallets-kit": "^2.7.1",
+    "@stellar/stellar-sdk": "^17.2.1",
+    "@tanstack/react-query": "^5.104.2",
+    "clsx": "^2.1.1",
+    "next": "^15.0.0",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0",
+    "shaders": "^3.2.475"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.26",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.6.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

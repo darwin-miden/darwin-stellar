@@ -217,3 +217,6 @@ impl Market {
         out
     }
 }
+
+#[cfg(test)]
+mod test;

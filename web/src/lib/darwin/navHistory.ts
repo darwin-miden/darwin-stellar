@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { calendarDay } from "./format";
 import { COINS, priceAt } from "./catalogue";
 import type { Leg, NavHistory, Range } from "./types";
+import { withBase } from "@/lib/basePath";
 
 export const RANGES: readonly Range[] = ["7D", "30D", "90D", "1Y"];
 
@@ -39,7 +40,7 @@ async function fetchHistory(symbols: string[], range: Range): Promise<History> {
   const q = RANGE_QUERY[range];
   const series = symbols.map(tickerFor).filter((t): t is string => !!t);
   const tickers = series.length ? [...new Set(series)] : [CLOCK];
-  const res = await fetch(`/api/history?symbols=${encodeURIComponent(tickers.join(","))}&range=${q.range}&interval=${q.interval}`);
+  const res = await fetch(withBase(`/api/history?symbols=${encodeURIComponent(tickers.join(","))}&range=${q.range}&interval=${q.interval}`));
   if (!res.ok) throw new Error(`history ${res.status}`);
   return res.json();
 }

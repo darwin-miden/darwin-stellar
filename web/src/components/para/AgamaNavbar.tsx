@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import clsx from "clsx";
 import { LogoFull } from "../Logo";
+import { withBase } from "@/lib/basePath";
 
 /**
  * Agama's navbar, replicated with its EXACT markup + Tailwind classes (recolored to Darwin orange):
@@ -63,7 +64,7 @@ export function NetworkPill() {
     >
       <span className="flex h-[20px] w-[20px] items-center justify-center rounded-full overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/stellar.svg" alt="Stellar" className="h-[20px] w-[20px] object-cover" />
+        <img src={withBase("/stellar.svg")} alt="Stellar" className="h-[20px] w-[20px] object-cover" />
       </span>
       <svg className="h-3 w-3 text-white" viewBox="0 0 24 24" fill="none" aria-hidden>
         <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

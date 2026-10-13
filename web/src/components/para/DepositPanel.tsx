@@ -12,6 +12,7 @@ import { formatUnits, useData } from "../../lib/data";
 import { addr, ensureFunded, write } from "../../lib/stellar";
 import { useWallet } from "../../lib/wallet";
 import { useToast } from "./Toast";
+import { withBase } from "@/lib/basePath";
 
 export function DepositPanel({ onClose }: { onClose: () => void }) {
   const { address, sign, walletName } = useWallet();
@@ -80,7 +81,7 @@ export function DepositPanel({ onClose }: { onClose: () => void }) {
       <button type="button" onClick={topUpXlm} disabled={busy != null} className="cx-choice">
         <span className="cx-tile cx-tile-miden">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/stellar.svg" alt="" width={22} height={22} />
+          <img src={withBase("/stellar.svg")} alt="" width={22} height={22} />
         </span>
         <span className="cx-body">
           <span className="cx-title" style={{ display: "block" }}>

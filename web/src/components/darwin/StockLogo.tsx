@@ -1,6 +1,7 @@
 "use client";
 
 import { memo, useState, type CSSProperties } from "react";
+import { withBase } from "@/lib/basePath";
 
 /** Logos served locally so nothing depends on a third-party CDN: coin logos, and for the
  *  Stellar RWAs the issuing sovereign's flag (bonds / bills) or the fund's mark. */
@@ -8,7 +9,7 @@ const COIN_ICONS = new Set(["BTC", "ETH"]);
 const RWA_ICONS = new Set(["XLM", "GOLD", "USDY", "BENJI", "EUTBL", "USTRY", "GILTS", "CETES", "TESOURO"]);
 
 const logoUrl = (symbol: string) =>
-  COIN_ICONS.has(symbol) ? `/logos/crypto/${symbol}.png` : RWA_ICONS.has(symbol) ? `/logos/rwa/${symbol}.svg` : "";
+  COIN_ICONS.has(symbol) ? withBase(`/logos/crypto/${symbol}.png`) : RWA_ICONS.has(symbol) ? withBase(`/logos/rwa/${symbol}.svg`) : "";
 
 export const StockLogo = memo(function StockLogo({ sym, size = 22 }: { sym: string; size?: number }) {
   const symbol = sym.trim().toUpperCase();

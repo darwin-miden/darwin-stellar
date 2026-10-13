@@ -881,3 +881,44 @@ details > summary:hover {
 .cx-newto:hover { color: var(--orange); }
 .cx-newto b { font-weight: 600; color: var(--ink-2); }
 .cx-newto:hover b { color: var(--orange); }
+
+/* ── connect menu (WalletMenu) ───────────────────────────────────────────────────────── */
+.wm-anchor { position: relative; display: inline-flex; }
+.wm-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 60;
+  width: 248px;
+  padding: 8px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 20px;
+  box-shadow: 0 18px 48px rgba(11, 11, 12, 0.18);
+  animation: wm-in 0.14s ease-out;
+}
+@keyframes wm-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}
+.wm-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 9px 10px;
+  border-radius: 13px;
+  text-align: left;
+  color: var(--ink);
+  transition: background 0.12s ease;
+}
+.wm-item:hover:not(:disabled) { background: var(--paper-2); }
+.wm-item:focus-visible { outline: 2px solid var(--orange); outline-offset: -2px; }
+.wm-item:disabled { cursor: default; }
+.wm-item:disabled:not([aria-busy="true"]) { opacity: 0.5; }
+.wm-icon { width: 36px; height: 36px; border-radius: 10px; object-fit: contain; flex: none; }
+.wm-name { flex: 1; font-size: 16px; font-weight: 500; }
+.wm-spin { width: 14px; height: 14px; border: 2px solid var(--rule-2); border-top-color: var(--ink); border-radius: 50%; }
+.wm-note { display: block; padding: 10px; font-size: 13px; color: var(--ink-3); }
+.wm-link { color: var(--ink); font-weight: 500; }
+.wm-foot { padding: 8px 10px 6px; font-size: 13px; color: var(--ink-3); }

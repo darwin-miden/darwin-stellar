@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 
 import { BASKETS } from "../../lib/baskets";
 import { useData } from "../../lib/data";
-import { useWallet, type ConnectMethod } from "../../lib/wallet";
+import { useWallet } from "../../lib/wallet";
 import { DarwinHome } from "../darwin/DarwinHome";
 import { HeroActions, darwinContainer } from "../darwin/shell";
 import { ActivityTab, TradeHistory } from "./Activity";
@@ -29,43 +29,13 @@ import { PortfolioTab } from "./PortfolioTab";
 import { useToast } from "./Toast";
 import { TradeCard } from "./TradeCard";
 import { usePanelScroll } from "./usePanelScroll";
+import { WalletMenu } from "./WalletMenu";
 
 type Tab = "Baskets" | "Portfolio" | "Activity";
 
 const short = (a: string | null) => (a ? `${a.slice(0, 4)}…${a.slice(-4)}` : "");
 const knownSymbol = (s: string | null) => (s && BASKETS.some((b) => b.symbol === s) ? s : null);
 const nameOf = (s: string) => BASKETS.find((b) => b.symbol === s)?.name ?? s;
-
-/* Wallet mark — any Stellar wallet through the Wallets Kit. */
-function WalletIcon() {
-  return (
-    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <rect x="3" y="6" width="18" height="13" rx="2.5" stroke="currentColor" strokeWidth="1.7" />
-      <path d="M3 10h18" stroke="currentColor" strokeWidth="1.7" />
-      <circle cx="16.5" cy="14" r="1.35" fill="currentColor" />
-    </svg>
-  );
-}
-
-/* Sparkle mark — the instant demo wallet. */
-function SparkIcon() {
-  return (
-    <svg width="21" height="21" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path
-        d="M12 2.5l2.2 5.9a2 2 0 0 0 1.4 1.4L21.5 12l-5.9 2.2a2 2 0 0 0-1.4 1.4L12 21.5l-2.2-5.9a2 2 0 0 0-1.4-1.4L2.5 12l5.9-2.2a2 2 0 0 0 1.4-1.4L12 2.5z"
-        fill="currentColor"
-      />
-    </svg>
-  );
-}
-
-function ArrowIcon() {
-  return (
-    <svg className="cx-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-      <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
 export function App() {
   const { address, connect, disconnect, connecting } = useWallet();
@@ -93,16 +63,16 @@ export function App() {
   }, []);
   usePanelScroll(openSymbol);
 
-  const [choosing, setChoosing] = useState<ConnectMethod | null>(null);
-  async function choose(m: ConnectMethod) {
-    setChoosing(m);
+  const [choosing, setChoosing] = useState<string | null>(null);
+  async function choose(walletId: string) {
+    setChoosing(walletId);
     try {
-      await connect(m);
+      await connect("kit", walletId);
       setConnectOpen(false);
       refresh();
     } catch (e) {
-      const msg = String((e as Error)?.message ?? e);
-      if (!/closed|cancel|reject/i.test(msg)) toast.push({ type: "error", title: "Couldn't connect", message: msg });
+      const msg = String((e as Error)?.message ?? (e as { message?: string })?.message ?? e);
+      if (!/closed|cancel|reject|denied|declined/i.test(msg)) toast.push({ type: "error", title: "Couldn't connect", message: msg });
     } finally {
       setChoosing(null);
     }
@@ -119,13 +89,16 @@ export function App() {
   ) : (
     <>
       <NetworkPill />
-      {connecting ? (
-        <SigningInPill />
-      ) : (
-        <AnimatedButton onClick={() => setConnectOpen(true)} className={`h-10 px-[17px] text-[14px] font-medium ${NAV_ACTION_WIDTH}`}>
-          Connect wallet
-        </AnimatedButton>
-      )}
+      <span className="wm-anchor">
+        {connecting ? (
+          <SigningInPill />
+        ) : (
+          <AnimatedButton onClick={() => setConnectOpen((o) => !o)} className={`h-10 px-[17px] text-[14px] font-medium ${NAV_ACTION_WIDTH}`}>
+            Connect wallet
+          </AnimatedButton>
+        )}
+        {connectOpen && <WalletMenu pending={choosing} onPick={(id) => void choose(id)} onClose={() => !choosing && setConnectOpen(false)} />}
+      </span>
     </>
   );
 
@@ -176,47 +149,6 @@ export function App() {
         ))}
 
       {tab === "Activity" && (address ? <ActivityTab accountId={address} /> : <ConnectPrompt tab="Activity" onConnect={() => setConnectOpen(true)} />)}
-
-      {connectOpen && !address && (
-        <Overlay onClose={() => setConnectOpen(false)}>
-          <h2 style={{ fontSize: 19, fontWeight: 600, margin: "2px 0 0", letterSpacing: "-0.01em" }}>Connect</h2>
-          <p style={{ marginTop: 5, fontSize: 14, color: "var(--ink-3)" }}>Choose how you&rsquo;d like to sign in.</p>
-
-          <button type="button" onClick={() => void choose("kit")} disabled={connecting} className="cx-choice" style={{ marginTop: 18 }}>
-            <span className="cx-tile cx-tile-para">
-              <WalletIcon />
-            </span>
-            <span className="cx-body">
-              <span className="cx-title" style={{ display: "block" }}>
-                {connecting && choosing === "kit" ? "Waiting for your wallet…" : "Connect a Stellar wallet"}
-              </span>
-              <span className="cx-sub" style={{ display: "block" }}>
-                Freighter, xBull, Lobstr, Albedo, Hana, Rabet…
-              </span>
-            </span>
-            <ArrowIcon />
-          </button>
-
-          <button type="button" onClick={() => void choose("demo")} disabled={connecting} className="cx-choice">
-            <span className="cx-tile cx-tile-miden">
-              <SparkIcon />
-            </span>
-            <span className="cx-body">
-              <span className="cx-title" style={{ display: "block" }}>
-                {connecting && choosing === "demo" ? "Connecting…" : "Try with a demo wallet"}
-              </span>
-              <span className="cx-sub" style={{ display: "block" }}>
-                Instant testnet account in your browser, no extension
-              </span>
-            </span>
-            <ArrowIcon />
-          </button>
-
-          <a href="https://www.freighter.app" target="_blank" rel="noopener noreferrer" className="cx-newto">
-            New to Stellar? <b>Get Freighter at freighter.app →</b>
-          </a>
-        </Overlay>
-      )}
 
       {depositOpen && address && (
         <Overlay onClose={() => setDepositOpen(false)}>

@@ -8,8 +8,11 @@
 import {
   Account,
   Address,
+  Asset,
   BASE_FEE,
   Contract,
+  Horizon,
+  Operation,
   TransactionBuilder,
   nativeToScVal,
   rpc,
@@ -17,7 +20,7 @@ import {
   xdr,
 } from "@stellar/stellar-sdk";
 
-import { DEPLOYMENT, FRIENDBOT, PASSPHRASE, RPC_URL } from "./config";
+import { DEPLOYMENT, FRIENDBOT, HORIZON_URL, PASSPHRASE, RPC_URL, USDC_ISSUER } from "./config";
 
 export const server = new rpc.Server(RPC_URL);
 
@@ -99,16 +102,80 @@ export async function ensureFunded(user: string): Promise<boolean> {
   }
 }
 
-export async function xlmBalance(user: string): Promise<number | null> {
+export const horizon = new Horizon.Server(HORIZON_URL);
+export const USDC_ASSET = new Asset("USDC", USDC_ISSUER);
+
+/** What Horizon knows about an address: does the account exist, its XLM, and its Circle USDC line. */
+export interface AccountState {
+  exists: boolean;
+  xlm: number;
+  /** null = no USDC trustline yet (the account can't hold Circle's USDC). */
+  usdc: bigint | null;
+}
+
+export async function accountState(user: string): Promise<AccountState> {
+  const r = await fetch(`${HORIZON_URL}/accounts/${user}`);
+  if (r.status === 404) return { exists: false, xlm: 0, usdc: null };
+  if (!r.ok) throw new Error(`Horizon ${r.status}`);
+  const j = (await r.json()) as { balances: Array<{ asset_type: string; asset_code?: string; asset_issuer?: string; balance: string }> };
+  const native = j.balances.find((b) => b.asset_type === "native");
+  const line = j.balances.find((b) => b.asset_code === "USDC" && b.asset_issuer === USDC_ISSUER);
+  return { exists: true, xlm: native ? Number(native.balance) : 0, usdc: line ? toBase(line.balance) : null };
+}
+
+/** "12.3456789" → 123456789n (7 decimals). */
+function toBase(amount: string): bigint {
+  const [w, f = ""] = amount.split(".");
+  return BigInt(w) * 10_000_000n + BigInt((f + "0000000").slice(0, 7));
+}
+
+/** A classic transaction (trustline, swap), signed by the connected wallet and sent to Horizon. */
+async function sendClassic(user: string, sign: Signer, ops: xdr.Operation[]): Promise<string> {
+  const acct = await horizon.loadAccount(user);
+  let b = new TransactionBuilder(acct, { fee: "1000", networkPassphrase: PASSPHRASE });
+  for (const op of ops) b = b.addOperation(op);
+  const tx = b.setTimeout(120).build();
+  const signed = TransactionBuilder.fromXDR(await sign(tx.toXDR()), PASSPHRASE);
   try {
-    const r = await fetch(`https://horizon-testnet.stellar.org/accounts/${user}`);
-    if (!r.ok) return null;
-    const j = (await r.json()) as { balances: Array<{ asset_type: string; balance: string }> };
-    const n = j.balances.find((b) => b.asset_type === "native");
-    return n ? Number(n.balance) : 0;
-  } catch {
-    return null;
+    const res = await horizon.submitTransaction(signed);
+    return res.hash;
+  } catch (e) {
+    const codes = (e as { response?: { data?: { extras?: { result_codes?: unknown } } } }).response?.data?.extras?.result_codes;
+    throw new Error(codes ? `Transaction failed: ${JSON.stringify(codes)}` : String((e as Error)?.message ?? e));
   }
+}
+
+/** One signature, once: lets the account hold Circle's USDC. */
+export function addUsdcTrustline(user: string, sign: Signer): Promise<string> {
+  return sendClassic(user, sign, [Operation.changeTrust({ asset: USDC_ASSET })]);
+}
+
+/** Best quote for swapping `xlm` XLM into USDC on the testnet DEX / pool. */
+export async function quoteXlmToUsdc(xlm: string): Promise<{ usdc: string; path: Asset[] } | null> {
+  const paths = await horizon.strictSendPaths(Asset.native(), xlm, [USDC_ASSET]).call();
+  const best = paths.records[0];
+  if (!best) return null;
+  return {
+    usdc: best.destination_amount,
+    path: best.path.map((p) => (p.asset_type === "native" ? Asset.native() : new Asset(p.asset_code, p.asset_issuer))),
+  };
+}
+
+/** Swap testnet XLM for real Circle USDC, paid to the same wallet (1% slippage floor). */
+export async function swapXlmToUsdc(user: string, sign: Signer, xlm: string): Promise<{ hash: string; usdc: string }> {
+  const q = await quoteXlmToUsdc(xlm);
+  if (!q) throw new Error("No XLM → USDC route on testnet right now");
+  const hash = await sendClassic(user, sign, [
+    Operation.pathPaymentStrictSend({
+      sendAsset: Asset.native(),
+      sendAmount: xlm,
+      destination: user,
+      destAsset: USDC_ASSET,
+      destMin: (Number(q.usdc) * 0.99).toFixed(7),
+      path: q.path,
+    }),
+  ]);
+  return { hash, usdc: q.usdc };
 }
 
 // Contract error codes → readable copy (codes are per-contract, see contracts/*/src/lib.rs; these
@@ -117,6 +184,8 @@ const CONTRACT_ERRORS: Record<string, string> = {
   "2": "Insufficient balance.",
   "3": "The price moved (or the feed is refreshing) beyond your slippage limit. Try again.",
   "4": "Market reserve too low for this sale.",
+  // Circle's USDC contract: the account has no USDC trustline.
+  "13": "Add the USDC trustline first (Faucet tab).",
 };
 
 // The same code means different things per contract.

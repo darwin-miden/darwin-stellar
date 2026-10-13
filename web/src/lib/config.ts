@@ -12,4 +12,8 @@ export const ONE = 10n ** BigInt(DECIMALS);
 /** Oracle prices: USD with 14 decimals (Reflector precision). */
 export const PRICE_DECIMALS = 14;
 
+/** Circle's USDC: its Stellar Asset Contract, and the classic asset behind it (trustline, swaps). */
 export const USDC = deployment.usdc;
+export const USDC_ISSUER = deployment.usdcIssuer;
+export const HORIZON_URL = "https://horizon-testnet.stellar.org";
+export const CIRCLE_FAUCET = "https://faucet.circle.com/";

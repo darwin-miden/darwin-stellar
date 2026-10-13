@@ -10,8 +10,7 @@ import { useCallback, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { BASKETS } from "./baskets";
-import { USDC } from "./config";
-import { addr, read, xlmBalance } from "./stellar";
+import { accountState, addr, read, type AccountState } from "./stellar";
 import { useWallet } from "./wallet";
 
 export interface BasketNav {
@@ -33,8 +32,11 @@ interface RawNav {
 }
 
 export interface Balances {
+  /** Circle USDC (0 when there is no trustline yet). */
   usdc: bigint;
+  /** null = the account doesn't exist on testnet yet. */
   xlm: number | null;
+  trustline: boolean;
   shares: Record<string, bigint>;
 }
 
@@ -59,14 +61,16 @@ export async function loadNavs(): Promise<Record<string, BasketNav>> {
 }
 
 async function loadBalances(user: string): Promise<Balances> {
-  const [usdc, xlm, ...shares] = await Promise.all([
-    read<bigint>(USDC, "balance", [addr(user)]),
-    xlmBalance(user),
+  // USDC comes from Horizon: Circle's contract errors (instead of 0) on an account with no trustline.
+  const [acct, ...shares] = await Promise.all([
+    accountState(user),
     ...BASKETS.map((b) => read<bigint>(b.shares, "balance", [addr(user)])),
   ]);
+  const a = acct as AccountState;
   return {
-    usdc: BigInt(usdc as bigint),
-    xlm: xlm as number | null,
+    usdc: a.usdc ?? 0n,
+    xlm: a.exists ? a.xlm : null,
+    trustline: a.usdc !== null,
     shares: Object.fromEntries(BASKETS.map((b, i) => [b.symbol, BigInt(shares[i] as bigint)])),
   };
 }

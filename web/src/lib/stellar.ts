@@ -33,7 +33,7 @@ export async function read<T = unknown>(contractId: string, method: string, args
     .setTimeout(30)
     .build();
   const sim = await server.simulateTransaction(tx);
-  if (!rpc.Api.isSimulationSuccess(sim)) throw new Error(simError(sim));
+  if (!rpc.Api.isSimulationSuccess(sim)) throw new Error(simError(sim, method));
   return scValToNative(sim.result!.retval) as T;
 }
 
@@ -46,7 +46,7 @@ export async function simulateAs<T = unknown>(user: string, contractId: string, 
     .setTimeout(30)
     .build();
   const sim = await server.simulateTransaction(tx);
-  if (!rpc.Api.isSimulationSuccess(sim)) throw new Error(simError(sim));
+  if (!rpc.Api.isSimulationSuccess(sim)) throw new Error(simError(sim, method));
   return scValToNative(sim.result!.retval) as T;
 }
 
@@ -71,7 +71,7 @@ export async function write<T = unknown>(
   try {
     prepared = await server.prepareTransaction(raw);
   } catch (e) {
-    throw new Error(prettyContractError(String((e as Error)?.message ?? e)));
+    throw new Error(prettyContractError(String((e as Error)?.message ?? e), method));
   }
   const signedXdr = await sign(prepared.toXDR());
   const signed = TransactionBuilder.fromXDR(signedXdr, PASSPHRASE);
@@ -117,16 +117,21 @@ const CONTRACT_ERRORS: Record<string, string> = {
   "2": "Insufficient balance.",
   "3": "The price moved (or the feed is refreshing) beyond your slippage limit. Try again.",
   "4": "Market reserve too low for this sale.",
-  "6": "Faucet cooldown: you can claim test USDC once an hour.",
 };
 
-function prettyContractError(msg: string): string {
+// The same code means different things per contract.
+const METHOD_ERRORS: Record<string, Record<string, string>> = {
+  faucet: { "6": "Faucet cooldown: you can claim test USDC once an hour." },
+  buy: { "6": "New buys are paused on this basket. You can still sell." },
+};
+
+function prettyContractError(msg: string, method = ""): string {
   const m = msg.match(/Error\(Contract, #(\d+)\)/);
-  if (m) return CONTRACT_ERRORS[m[1]] ?? `Contract error #${m[1]}`;
+  if (m) return METHOD_ERRORS[method]?.[m[1]] ?? CONTRACT_ERRORS[m[1]] ?? `Contract error #${m[1]}`;
   return msg.length > 220 ? msg.slice(0, 220) + "…" : msg;
 }
 
-function simError(sim: rpc.Api.SimulateTransactionResponse): string {
+function simError(sim: rpc.Api.SimulateTransactionResponse, method = ""): string {
   const e = (sim as rpc.Api.SimulateTransactionErrorResponse).error ?? "simulation failed";
-  return prettyContractError(e);
+  return prettyContractError(e, method);
 }

@@ -149,3 +149,14 @@ fn only_the_admin_lists_and_syncs() {
     assert!(m.try_list(&t).is_err());
     assert!(m.try_sync().is_err());
 }
+
+#[test]
+fn admin_handover() {
+    let s = setup(P14);
+    let next = Address::generate(&s.e);
+    s.m.set_admin(&next);
+    assert_eq!(s.m.admin(), next);
+    s.e.set_auths(&[]);
+    assert!(s.m.try_set_admin(&next).is_err());
+    assert!(s.m.try_list(&s.asset).is_err());
+}

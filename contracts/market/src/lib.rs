@@ -13,7 +13,7 @@
 
 use soroban_sdk::{
     contract, contractclient, contracterror, contractimpl, contracttype, panic_with_error, token::TokenClient,
-    Address, Env,
+    Address, BytesN, ContractExecutable, Env,
 };
 
 const DAY_LEDGERS: u32 = 17_280;
@@ -125,6 +125,16 @@ impl Market {
 
     pub fn admin(e: Env) -> Address {
         get(&e, &DataKey::Admin)
+    }
+
+    pub fn set_admin(e: Env, new_admin: Address) {
+        Self::admin(e.clone()).require_auth();
+        e.storage().instance().set(&DataKey::Admin, &new_admin);
+    }
+
+    pub fn upgrade(e: Env, wasm_hash: BytesN<32>) {
+        Self::admin(e.clone()).require_auth();
+        e.deployer().update_current_contract(ContractExecutable::Wasm(wasm_hash));
     }
 
     pub fn usdc(e: Env) -> Address {

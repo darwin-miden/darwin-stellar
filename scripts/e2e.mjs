@@ -6,6 +6,7 @@
 //
 //   node scripts/e2e.mjs            # all baskets
 //   node scripts/e2e.mjs DXEM       # one basket
+import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join } from "node:path";
@@ -21,6 +22,10 @@ const server = new rpc.Server(D.rpcUrl);
 const NET = D.passphrase;
 const USDC_ONE = 10n ** 7n;
 const ONLY = process.argv[2];
+// The admin key (stellar CLI identity) pauses and unpauses buys during the test.
+const ADMIN = Keypair.fromSecret(
+  execFileSync("stellar", ["keys", "show", process.env.DARWIN_ADMIN ?? "darwin-stellar-admin"], { encoding: "utf8" }).trim(),
+);
 
 // ── tiny client ───────────────────────────────────────────────────────────────────────────
 
@@ -203,6 +208,11 @@ async function basketRoundTrip(b, alice, bob) {
   const legMints = legs.filter((c) => ev.some((e) => e.contract === c.token && e.topics[0] === "mint" && e.topics[1] === b.vault));
   check(legMints.length === legs.length, `one tx minted all ${legs.length} legs into the vault`, legMints.map((c) => c.sym).join(", "));
   check(ev.some((e) => e.contract === b.shares && e.topics[0] === "mint" && e.topics[1] === alice.publicKey()), `${b.symbol} minted to the buyer in the same tx`);
+  const bought = ev.find((e) => e.contract === b.vault && e.topics[0] === "bought" && e.topics[1] === alice.publicKey());
+  check(
+    !!bought && BigInt(bought.data.shares) === minted && BigInt(bought.data.usdc_in) === SPEND && BigInt(bought.data.fee) === (SPEND * 30n) / 10_000n,
+    "vault emitted Bought { usdc_in: 200, fee: 0.60, shares }",
+  );
 
   const usdc1 = await bal(D.usdc, alice.publicKey());
   const fee1 = await bal(D.usdc, D.admin);
@@ -224,9 +234,18 @@ async function basketRoundTrip(b, alice, bob) {
   const over = await mustFail(alice, b.vault, "sell", [a(alice.publicKey()), i(minted + 1n), i(0)]);
   check(over.failed, "selling more than the balance reverts", over.msg);
 
-  // sell half, then the rest
+  // the admin pauses new buys: buying reverts, but holders can still sell (the next step)
+  await send(ADMIN, b.vault, "set_paused", [xdr.ScVal.scvBool(true)]);
+  const paused = await mustFail(alice, b.vault, "buy", [a(alice.publicKey()), i(SPEND), i(0)], "#6");
+  check(paused.failed, "paused: new buys revert", paused.msg);
+  const notAdmin = await mustFail(bob, b.vault, "set_paused", [xdr.ScVal.scvBool(false)]);
+  check(notAdmin.failed, "only the admin can unpause", notAdmin.msg);
+
+  // sell half (while paused), then the rest
   const half = minted / 2n;
   const sell1 = await send(alice, b.vault, "sell", [a(alice.publicKey()), i(half), i(0)]);
+  await send(ADMIN, b.vault, "set_paused", [xdr.ScVal.scvBool(false)]);
+  check((await read(b.vault, "paused")) === false, "sells stay open while paused; buys reopened");
   const back1 = BigInt(sell1.value);
   const expectBack = (half * navPerShare * 9990n * 9980n) / (USDC_ONE * 10_000n * 10_000n);
   console.log(`  sell 50% tx ${sell1.hash}`);
@@ -234,6 +253,8 @@ async function basketRoundTrip(b, alice, bob) {
   const sellEv = await eventsOf(sell1);
   const legBurns = legs.filter((c) => sellEv.some((e) => e.contract === c.token && e.topics[0] === "burn"));
   check(legBurns.length === legs.length, `one tx sold all ${legs.length} legs`);
+  const sold = sellEv.find((e) => e.contract === b.vault && e.topics[0] === "sold" && e.topics[1] === alice.publicKey());
+  check(!!sold && BigInt(sold.data.shares) === half && BigInt(sold.data.usdc_out) === back1, "vault emitted Sold { shares, fee, usdc_out }");
 
   const rest = await bal(b.shares, alice.publicKey());
   const sell2 = await send(alice, b.vault, "sell", [a(alice.publicKey()), i(rest), i(0)]);
@@ -267,7 +288,15 @@ check(legMint.failed, "nobody but the market can mint a constituent", legMint.ms
 const summary = [];
 for (const b of D.baskets) {
   if (ONLY && b.symbol !== ONLY) continue;
-  summary.push(await basketRoundTrip(b, alice, bob));
+  try {
+    summary.push(await basketRoundTrip(b, alice, bob));
+  } catch (e) {
+    check(false, `${b.symbol}: ${e.message ?? e}`);
+    // leave nothing behind: reopen buys and sell back whatever the test still holds
+    if (await read(b.vault, "paused")) await send(ADMIN, b.vault, "set_paused", [xdr.ScVal.scvBool(false)]);
+    const left = await bal(b.shares, alice.publicKey());
+    if (left > 0n) await send(alice, b.vault, "sell", [a(alice.publicKey()), i(left), i(0)]);
+  }
 }
 
 console.log("\n──────── summary");

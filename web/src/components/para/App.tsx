@@ -29,20 +29,22 @@ import { PortfolioTab } from "./PortfolioTab";
 import { useToast } from "./Toast";
 import { TradeCard } from "./TradeCard";
 import { usePanelScroll } from "./usePanelScroll";
-import { WalletMenu } from "./WalletMenu";
+import { FaucetTab } from "./FaucetTab";
+import { AccountMenu, WalletMenu } from "./WalletMenu";
 
-type Tab = "Baskets" | "Portfolio" | "Activity";
+type Tab = "Baskets" | "Portfolio" | "Activity" | "Faucet";
 
 const short = (a: string | null) => (a ? `${a.slice(0, 4)}…${a.slice(-4)}` : "");
 const knownSymbol = (s: string | null) => (s && BASKETS.some((b) => b.symbol === s) ? s : null);
 const nameOf = (s: string) => BASKETS.find((b) => b.symbol === s)?.name ?? s;
 
 export function App() {
-  const { address, connect, disconnect, connecting } = useWallet();
+  const { address, connect, disconnect, connecting, walletName } = useWallet();
   const { refresh } = useData();
   const toast = useToast();
   const [tab, setTab] = useState<Tab>("Baskets");
   const [connectOpen, setConnectOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
   const [depositOpen, setDepositOpen] = useState(false);
   const [openSymbol, setOpenSymbol] = useState<string | null>(() =>
     typeof window === "undefined" ? null : knownSymbol(new URLSearchParams(window.location.search).get("b")),
@@ -82,9 +84,20 @@ export function App() {
     // network selector + account button: the same box as signed out, so nothing shifts on connect
     <span className="wm-anchor">
       <NetworkPill />
-      <NavPillButton onClick={() => void disconnect()} title={address} className={`${NAV_ACTION_WIDTH} !font-mono !text-[14px]`}>
-        {short(address)} ⏻
+      <NavPillButton onClick={() => setAccountOpen((o) => !o)} title={address} className={`${NAV_ACTION_WIDTH} !font-mono !text-[14px]`}>
+        {short(address)}
       </NavPillButton>
+      {accountOpen && (
+        <AccountMenu
+          address={address}
+          walletName={walletName}
+          onClose={() => setAccountOpen(false)}
+          onDisconnect={() => {
+            setAccountOpen(false);
+            void disconnect();
+          }}
+        />
+      )}
     </span>
   ) : (
     // The menu spans exactly the network pill + Connect wallet, right below them.
@@ -105,7 +118,7 @@ export function App() {
     <AgamaFrame
       nav={
         <AgamaNavbar
-          tabs={["Baskets", "Portfolio", "Activity"]}
+          tabs={["Baskets", "Portfolio", "Activity", "Faucet"]}
           activeTab={tab}
           onTab={(t) => {
             // Clicking Baskets while a basket is open means "back to the grid".
@@ -146,6 +159,10 @@ export function App() {
         ) : (
           <ConnectPrompt tab="Portfolio" onConnect={() => setConnectOpen(true)} />
         ))}
+
+      {tab === "Faucet" && (
+        <FaucetTab onConnect={() => setConnectOpen(true)} onGoBaskets={() => setTab("Baskets")} />
+      )}
 
       {tab === "Activity" && (address ? <ActivityTab accountId={address} /> : <ConnectPrompt tab="Activity" onConnect={() => setConnectOpen(true)} />)}
 

@@ -1,0 +1,282 @@
+/*
+ * The trade card: one side at a time, and the whole job rather than just the form — funding
+ * when there is no cash, the amount, what you get for it, and the settlement wait. Tokens come
+ * from `.darwin-ui`, which BasketScreen wraps the card in.
+ */
+
+.sides {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
+  padding: 3px;
+  border-radius: var(--radius-l);
+  background: var(--color-bg-elevated);
+}
+.side {
+  appearance: none;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 650;
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 9px 0;
+  border-radius: 8px;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.side:hover:not(:disabled) {
+  color: var(--color-text-primary);
+}
+.side[data-on="true"] {
+  background: var(--pane);
+  color: var(--color-text-primary);
+  box-shadow: 0 1px 2px #19191814;
+}
+.side:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.fieldLabel {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: nowrap;
+  gap: 10px;
+  margin-top: 18px;
+  margin-bottom: 7px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+/* Never two lines: the label holds its width and a long balance ellipsises instead of wrapping. */
+.fieldLabel > :first-child {
+  white-space: nowrap;
+  flex: none;
+}
+.fieldLabel > :last-child {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
+}
+.maxLink {
+  appearance: none;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.maxLink:hover:not(:disabled) {
+  color: var(--color-text-primary);
+}
+.maxLink:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-xl);
+  background: var(--pane);
+  padding: 0 14px;
+  height: 58px;
+  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+.field:focus-within {
+  border-color: var(--color-border-hover);
+  box-shadow: 0 0 0 3px #19191810;
+}
+.field[data-over="true"] {
+  border-color: var(--color-status-negative);
+}
+.input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: none;
+  font: inherit;
+  font-size: 25px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-primary);
+}
+.input::placeholder {
+  color: var(--color-text-faint);
+}
+.input:disabled {
+  color: var(--color-text-faint);
+}
+.unit {
+  flex: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.cta {
+  appearance: none;
+  width: 100%;
+  margin-top: 16px;
+  height: 50px;
+  border: 0;
+  border-radius: var(--radius-xl);
+  background: var(--ink);
+  color: var(--on-ink);
+  font: inherit;
+  font-size: 14.5px;
+  font-weight: 650;
+  text-align: center;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+.cta:hover:not(:disabled) {
+  background: var(--ink-hover);
+}
+.cta:active:not(:disabled) {
+  transform: scale(0.99);
+}
+.cta:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.note {
+  margin-top: 11px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+.warn {
+  margin-top: 9px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-status-negative);
+}
+.linkish {
+  appearance: none;
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: var(--color-status-negative);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.diag {
+  margin-top: 10px;
+  font-family: var(--font-mono-stack);
+  font-size: 11px;
+  color: var(--color-text-muted);
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border-hair);
+  border-radius: var(--radius-m);
+  padding: 8px 10px;
+  word-break: break-word;
+}
+
+/* ── flow mode: the card owns funding, the wait and the position too ─────── */
+
+.position {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  padding: 11px 13px;
+  border-radius: var(--radius-l);
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border-hair);
+}
+.positionLabel {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  width: 100%;
+}
+.positionValue {
+  font-size: 19px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+.positionUsd {
+  font-size: 13.5px;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.chips {
+  display: flex;
+  gap: 7px;
+  margin-top: 9px;
+}
+.chip {
+  appearance: none;
+  border: 1px solid var(--color-border-default);
+  background: var(--pane);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  flex: 1;
+  padding: 7px 0;
+  border-radius: var(--radius-m);
+  text-align: center;
+  transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
+}
+.chip:hover:not(:disabled) {
+  border-color: var(--color-border-hover);
+  color: var(--color-text-primary);
+}
+.chip:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.receive {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px dashed var(--color-border-default);
+  border-radius: var(--radius-xl);
+  background: var(--color-bg-subtle);
+  padding: 0 14px;
+  height: 52px;
+}
+.receiveValue {
+  flex: 1;
+  min-width: 0;
+  font-size: 21px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.receiveValue[data-empty="true"] {
+  color: var(--color-text-faint);
+}

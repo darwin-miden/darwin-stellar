@@ -14,7 +14,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { Keypair, TransactionBuilder } from "@stellar/stellar-sdk";
 
 import { PASSPHRASE } from "./config";
-import { ensureFunded, type Signer } from "./stellar";
+import { type Signer } from "./stellar";
 
 export type ConnectMethod = "kit" | "demo";
 
@@ -100,8 +100,6 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         }
         setWalletName(kit.selectedModule?.productName ?? "Stellar wallet");
       }
-      // Gas onboarding: a fresh testnet account gets XLM from friendbot before its first trade.
-      await ensureFunded(a).catch(() => {});
       setAddress(a);
       setMethod(m);
       localStorage.setItem(LAST_KEY, m);

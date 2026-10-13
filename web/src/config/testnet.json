@@ -1,0 +1,320 @@
+{
+  "network": "testnet",
+  "rpcUrl": "https://soroban-testnet.stellar.org",
+  "passphrase": "Test SDF Network ; September 2015",
+  "deployedAt": "2026-10-13T17:06:03.009Z",
+  "admin": "GBXXJQJQLAZ7ENWVU2GBYVFPS5VRN7TN7YDHV7FFPPGMCE4XSTXXH23X",
+  "wasm": {
+    "token": "80111e8121e95e866cb455d6c13987f9b2581db9cf29aa307ed84278c207d439",
+    "oracle": "d48e261f9697f9b2bbaf84bde045bfb3942765c3fc832829cef71d060bd4d09b",
+    "market": "95ef40107b757f198bccc41fd6ef69c4ea72a1ac97226c5c4c48c2bb7c30778a",
+    "basket": "9dda14c129a2992d714b2b2f842ca2c094a4ec8bf77e5d429cdba7ae3fe3ea7d"
+  },
+  "reflector": {
+    "crypto": "CCYOZJCOPG34LLQQ7N24YXBM7LL62R7ONMZ3G6WZAAYPB5OYKOMJRN63",
+    "fiat": "CCSSOHTBL3LEWUCBBEB5NJFC2OKFRC74OWEIJIZLRJBGAAU4VMU5NV4W"
+  },
+  "usdc": "CBU5AHUXRIZNARUYBWJ7WTQH42FFEB4KY6PT2CA2XNWCPI5IH7HYF23I",
+  "oracle": "CDQRPS52N4MBQAFA6FYC4K4PRGFWCPWE5CI7IJZL6UHWI66PDUF6FVRS",
+  "market": "CA4ZGEKFNT342QC5M6XRQDDPG5MVT5TIUPGI46TVXIBNDK7KXXSB4S6O",
+  "assets": {
+    "USDY": {
+      "sym": "USDY",
+      "name": "Ondo US Dollar Yield",
+      "issuer": "Ondo Finance",
+      "kind": "T-bill note",
+      "feed": {
+        "fixed": "110000000000000"
+      },
+      "apyBps": 450,
+      "id": "CCNFM7TISEEAF76WAEOXLDMJISUPAHZHJUIUYQ5XKJ6WTNJ4LXTJMOJD",
+      "decimals": 12,
+      "launchPrice": "110000004708904",
+      "t0": 1791910832
+    },
+    "BENJI": {
+      "sym": "BENJI",
+      "name": "Franklin OnChain US Gov Money Fund",
+      "issuer": "Franklin Templeton",
+      "kind": "Money market fund",
+      "feed": {
+        "fixed": "100000000000000"
+      },
+      "apyBps": 410,
+      "id": "CCRDUNBFJGDKFJ6ZP2QE5FLAYGBOPNHOTLAZKSPUT7QEDDJJ2XV5SGVR",
+      "decimals": 12,
+      "launchPrice": "100000005850456",
+      "t0": 1791910832
+    },
+    "EUTBL": {
+      "sym": "EUTBL",
+      "name": "Spiko EU T-Bills Money Market Fund",
+      "issuer": "Spiko",
+      "kind": "Euro T-bills",
+      "feed": {
+        "fiat": "EUR"
+      },
+      "apyBps": 200,
+      "id": "CBHBJF7GUF76BD6DNY3GAL67XXA6A6V3KLA2IYO3MS7D5ULA5LMDQKNX",
+      "decimals": 12,
+      "launchPrice": "111879979419873",
+      "t0": 1791910832
+    },
+    "USTRY": {
+      "sym": "USTRY",
+      "name": "Etherfuse US Treasury Stablebond",
+      "issuer": "Etherfuse",
+      "kind": "US Treasury notes",
+      "feed": {
+        "fixed": "100000000000000"
+      },
+      "apyBps": 400,
+      "id": "CAUAWJWVCY44PVOS3ISRRTY7E7XGL6ALFW4AZAHWACYTCHSFQ7BDXVRT",
+      "decimals": 12,
+      "launchPrice": "100000010781329",
+      "t0": 1791910832
+    },
+    "GILTS": {
+      "sym": "GILTS",
+      "name": "Etherfuse UK Gilts Stablebond",
+      "issuer": "Etherfuse",
+      "kind": "UK government bonds",
+      "feed": {
+        "fiat": "GBP"
+      },
+      "apyBps": 420,
+      "id": "CB2RNWSGNU43E75CQOP4WRR23M3ACR5SJ7UXJLPNMLA764SW2LNO6JT6",
+      "decimals": 12,
+      "launchPrice": "132447402597831",
+      "t0": 1791910832
+    },
+    "CETES": {
+      "sym": "CETES",
+      "name": "Etherfuse Mexican CETES Stablebond",
+      "issuer": "Etherfuse",
+      "kind": "Mexican T-bills",
+      "feed": {
+        "fiat": "MXN"
+      },
+      "apyBps": 900,
+      "id": "CBN73HLHTVHJN44SLJFVHMRYX5BAERCRJJIROHRYNZVP3CYJG27BGRXH",
+      "decimals": 12,
+      "launchPrice": "5454210648991",
+      "t0": 1791910832
+    },
+    "TESOURO": {
+      "sym": "TESOURO",
+      "name": "Etherfuse Brazil Tesouro Stablebond",
+      "issuer": "Etherfuse",
+      "kind": "Brazilian T-bills",
+      "feed": {
+        "fiat": "BRL"
+      },
+      "apyBps": 1400,
+      "id": "CCUHPDKHBHOE7S7JDTPFWLBNTZL5J5TY4P4OD6ICIBJ4L3QR6PT6N3NM",
+      "decimals": 12,
+      "launchPrice": "19971531464848",
+      "t0": 1791910832
+    },
+    "GOLD": {
+      "sym": "GOLD",
+      "name": "Tokenized Gold (1 oz)",
+      "issuer": "Reflector XAU",
+      "kind": "Gold",
+      "feed": {
+        "fiat": "XAU"
+      },
+      "apyBps": 0,
+      "id": "CDTT2H7CJGCAMWW5Q4GPO7BOQVWXEELECAAWWBPTGHS5R4KI6SRMXRWS",
+      "decimals": 12,
+      "launchPrice": "417706109420935728",
+      "t0": 1791910832
+    },
+    "BTC": {
+      "sym": "BTC",
+      "name": "Bitcoin",
+      "issuer": "Reflector BTC",
+      "kind": "Crypto",
+      "feed": {
+        "crypto": "BTC"
+      },
+      "apyBps": 0,
+      "id": "CBRXEAAFS6V66353QVNBGWZOWGMIUXI74K6VLWP2KFE5B3EDTYD7LB4P",
+      "decimals": 12,
+      "launchPrice": "8334123495934959349",
+      "t0": 1791910832
+    },
+    "ETH": {
+      "sym": "ETH",
+      "name": "Ethereum",
+      "issuer": "Reflector ETH",
+      "kind": "Crypto",
+      "feed": {
+        "crypto": "ETH"
+      },
+      "apyBps": 0,
+      "id": "CBL7EOHGPUPJ7BYVKDJB7R25KUYO22WR22TA5KSVU55UG62RQ3RRFD6Z",
+      "decimals": 12,
+      "launchPrice": "251173330373382216",
+      "t0": 1791910832
+    },
+    "XLM": {
+      "sym": "XLM",
+      "name": "Stellar Lumens",
+      "issuer": "Reflector XLM",
+      "kind": "Crypto",
+      "feed": {
+        "crypto": "XLM"
+      },
+      "apyBps": 0,
+      "id": "CCVE5Z3OYA3ZVLIWIEFOITYHRBLAICFTT6INWVSL2K3X2BEJTS6TSD4Q",
+      "decimals": 12,
+      "launchPrice": "19161900543000",
+      "t0": 1791910832
+    }
+  },
+  "baskets": [
+    {
+      "symbol": "DXTB",
+      "name": "Global T-Bills",
+      "description": "Tokenized government cash: Ondo USDY, Franklin BENJI, Spiko euro T-bills and UK gilts.",
+      "weights": {
+        "USDY": 3000,
+        "BENJI": 2500,
+        "EUTBL": 2500,
+        "GILTS": 2000
+      },
+      "vault": "CBWS4NDQGNHCRXKSIUZHGKSWX4ETQZQOZ2HR2F2D5ZXCHL52FYS3BVRM",
+      "shares": "CDK6SPXKM7RBSJ55XIATHKIB3OO3POYI53647ZBWYU2JM4OHARX2KADF",
+      "constituents": [
+        {
+          "sym": "USDY",
+          "token": "CCNFM7TISEEAF76WAEOXLDMJISUPAHZHJUIUYQ5XKJ6WTNJ4LXTJMOJD",
+          "weightBps": 3000,
+          "units": "272727261052"
+        },
+        {
+          "sym": "BENJI",
+          "token": "CCRDUNBFJGDKFJ6ZP2QE5FLAYGBOPNHOTLAZKSPUT7QEDDJJ2XV5SGVR",
+          "weightBps": 2500,
+          "units": "249999985373"
+        },
+        {
+          "sym": "EUTBL",
+          "token": "CBHBJF7GUF76BD6DNY3GAL67XXA6A6V3KLA2IYO3MS7D5ULA5LMDQKNX",
+          "weightBps": 2500,
+          "units": "223453741497"
+        },
+        {
+          "sym": "GILTS",
+          "token": "CB2RNWSGNU43E75CQOP4WRR23M3ACR5SJ7UXJLPNMLA764SW2LNO6JT6",
+          "weightBps": 2000,
+          "units": "151003338742"
+        }
+      ]
+    },
+    {
+      "symbol": "DXEM",
+      "name": "Emerging Yield",
+      "description": "High-yield LatAm sovereign debt: Mexican CETES and Brazilian Tesouro stablebonds.",
+      "weights": {
+        "CETES": 5000,
+        "TESOURO": 5000
+      },
+      "vault": "CDORJ6HIZIJK5P6KD3PMG2NHGDZ6CUCGUN3FS7D6QHMS7EI3O67ALWHP",
+      "shares": "CDJ4EOUYLDV2MP3KQA2UV57UFA75RGEUYKBNQWNDIHSMVFLXKH3HQYUN",
+      "constituents": [
+        {
+          "sym": "CETES",
+          "token": "CBN73HLHTVHJN44SLJFVHMRYX5BAERCRJJIROHRYNZVP3CYJG27BGRXH",
+          "weightBps": 5000,
+          "units": "9167229360539"
+        },
+        {
+          "sym": "TESOURO",
+          "token": "CCUHPDKHBHOE7S7JDTPFWLBNTZL5J5TY4P4OD6ICIBJ4L3QR6PT6N3NM",
+          "weightBps": 5000,
+          "units": "2503563639473"
+        }
+      ]
+    },
+    {
+      "symbol": "DXBC",
+      "name": "Blue Chip",
+      "description": "The crypto blue chips plus Stellar's own: Bitcoin, Ethereum and XLM.",
+      "weights": {
+        "BTC": 5000,
+        "ETH": 3000,
+        "XLM": 2000
+      },
+      "vault": "CBTPXZE6YGA5QAXNS7RGY33ZI4KFZ4UJK4XY2L63KGPADDVP76DDQOJA",
+      "shares": "CD34N5R2RZRLNEU7ZJ2CVOFFFXIICAQMIHO46KACSKDSSXQRDWS5TFZZ",
+      "constituents": [
+        {
+          "sym": "BTC",
+          "token": "CBRXEAAFS6V66353QVNBGWZOWGMIUXI74K6VLWP2KFE5B3EDTYD7LB4P",
+          "weightBps": 5000,
+          "units": "5999431"
+        },
+        {
+          "sym": "ETH",
+          "token": "CBL7EOHGPUPJ7BYVKDJB7R25KUYO22WR22TA5KSVU55UG62RQ3RRFD6Z",
+          "weightBps": 3000,
+          "units": "119439432"
+        },
+        {
+          "sym": "XLM",
+          "token": "CCVE5Z3OYA3ZVLIWIEFOITYHRBLAICFTT6INWVSL2K3X2BEJTS6TSD4Q",
+          "weightBps": 2000,
+          "units": "1043737804353"
+        }
+      ]
+    },
+    {
+      "symbol": "DXAW",
+      "name": "All-Weather",
+      "description": "Treasuries, gold, Bitcoin, euro bills and CETES: one token for every regime.",
+      "weights": {
+        "USTRY": 3000,
+        "GOLD": 2500,
+        "BTC": 2000,
+        "EUTBL": 1500,
+        "CETES": 1000
+      },
+      "vault": "CDCFIAN5SNMWCVN46HVWGDXTUU77RMJ43B7OZXY32W7UWU7L2K324NZ6",
+      "shares": "CA3VU2DV3IRO3FDRK54T62AC4HASL4LSSLC34UCZJF634WIPDIFLEV26",
+      "constituents": [
+        {
+          "sym": "USTRY",
+          "token": "CAUAWJWVCY44PVOS3ISRRTY7E7XGL6ALFW4AZAHWACYTCHSFQ7BDXVRT",
+          "weightBps": 3000,
+          "units": "299999967656"
+        },
+        {
+          "sym": "GOLD",
+          "token": "CDTT2H7CJGCAMWW5Q4GPO7BOQVWXEELECAAWWBPTGHS5R4KI6SRMXRWS",
+          "weightBps": 2500,
+          "units": "59850692"
+        },
+        {
+          "sym": "BTC",
+          "token": "CBRXEAAFS6V66353QVNBGWZOWGMIUXI74K6VLWP2KFE5B3EDTYD7LB4P",
+          "weightBps": 2000,
+          "units": "2399772"
+        },
+        {
+          "sym": "EUTBL",
+          "token": "CBHBJF7GUF76BD6DNY3GAL67XXA6A6V3KLA2IYO3MS7D5ULA5LMDQKNX",
+          "weightBps": 1500,
+          "units": "134072244898"
+        },
+        {
+          "sym": "CETES",
+          "token": "CBN73HLHTVHJN44SLJFVHMRYX5BAERCRJJIROHRYNZVP3CYJG27BGRXH",
+          "weightBps": 1000,
+          "units": "1833445872107"
+        }
+      ]
+    }
+  ]
+}

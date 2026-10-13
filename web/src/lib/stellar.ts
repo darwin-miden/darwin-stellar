@@ -129,7 +129,7 @@ function toBase(amount: string): bigint {
   return BigInt(w) * 10_000_000n + BigInt((f + "0000000").slice(0, 7));
 }
 
-/** A classic transaction (trustline, swap), signed by the connected wallet and sent to Horizon. */
+/** A classic transaction (the trustline), signed by the connected wallet and sent to Horizon. */
 async function sendClassic(user: string, sign: Signer, ops: xdr.Operation[]): Promise<string> {
   const acct = await horizon.loadAccount(user);
   let b = new TransactionBuilder(acct, { fee: "1000", networkPassphrase: PASSPHRASE });
@@ -148,34 +148,6 @@ async function sendClassic(user: string, sign: Signer, ops: xdr.Operation[]): Pr
 /** One signature, once: lets the account hold Circle's USDC. */
 export function addUsdcTrustline(user: string, sign: Signer): Promise<string> {
   return sendClassic(user, sign, [Operation.changeTrust({ asset: USDC_ASSET })]);
-}
-
-/** Best quote for swapping `xlm` XLM into USDC on the testnet DEX / pool. */
-export async function quoteXlmToUsdc(xlm: string): Promise<{ usdc: string; path: Asset[] } | null> {
-  const paths = await horizon.strictSendPaths(Asset.native(), xlm, [USDC_ASSET]).call();
-  const best = paths.records[0];
-  if (!best) return null;
-  return {
-    usdc: best.destination_amount,
-    path: best.path.map((p) => (p.asset_type === "native" ? Asset.native() : new Asset(p.asset_code, p.asset_issuer))),
-  };
-}
-
-/** Swap testnet XLM for real Circle USDC, paid to the same wallet (1% slippage floor). */
-export async function swapXlmToUsdc(user: string, sign: Signer, xlm: string): Promise<{ hash: string; usdc: string }> {
-  const q = await quoteXlmToUsdc(xlm);
-  if (!q) throw new Error("No XLM → USDC route on testnet right now");
-  const hash = await sendClassic(user, sign, [
-    Operation.pathPaymentStrictSend({
-      sendAsset: Asset.native(),
-      sendAmount: xlm,
-      destination: user,
-      destAsset: USDC_ASSET,
-      destMin: (Number(q.usdc) * 0.99).toFixed(7),
-      path: q.path,
-    }),
-  ]);
-  return { hash, usdc: q.usdc };
 }
 
 // Contract error codes → readable copy (codes are per-contract, see contracts/*/src/lib.rs; these

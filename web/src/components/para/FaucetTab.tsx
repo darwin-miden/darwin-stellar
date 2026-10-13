@@ -6,49 +6,41 @@
  * done is not shown (activating and trusting each happen once), so the list only holds what is
  * left to do.
  *
- * Circle's USDC is a classic Stellar asset, so holding it takes a trustline. Getting it: Circle's
- * own faucet (20 USDC every 2 hours), or a swap of friendbot XLM on the testnet XLM/USDC pool,
- * which gives far more for a demo.
+ * Circle's USDC is a classic Stellar asset, so holding it takes a trustline; the USDC itself comes
+ * from Circle's own faucet.
  */
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 import { CIRCLE_FAUCET, EXPLORER } from "../../lib/config";
 import { toNum, useData } from "../../lib/data";
-import { addUsdcTrustline, ensureFunded, quoteXlmToUsdc, swapXlmToUsdc } from "../../lib/stellar";
+import { addUsdcTrustline, ensureFunded } from "../../lib/stellar";
 import { useWallet } from "../../lib/wallet";
 import { useToast } from "./Toast";
 import { withBase } from "@/lib/basePath";
 
 const WORDS = ["", "One step", "Two steps", "Three steps"];
-const SWAP_XLM = "1000";
 
 export function FaucetTab({ onConnect, onGoBaskets }: { onConnect: () => void; onGoBaskets: () => void }) {
   const { address, sign } = useWallet();
   const { balances, refresh } = useData();
   const toast = useToast();
-  const [busy, setBusy] = useState<"activate" | "trust" | "swap" | null>(null);
+  const [busy, setBusy] = useState<"activate" | "trust" | null>(null);
   const [copied, setCopied] = useState(false);
   // Optimistic: Horizon can take a moment to show a line that was just signed, and the step
   // disappearing is the confirmation the signature worked.
   const [trustDone, setTrustDone] = useState(false);
-  const [quote, setQuote] = useState<string | null>(null);
 
   const usdc = balances?.usdc;
   const funded = usdc !== undefined && usdc > 0n;
   // Unknown until the read answers, and "unknown" reads as done: flashing a step at somebody
   // whose account has been set up for months is worse than a step appearing a beat late.
   const activated = !address || balances === null || balances.xlm !== null;
-  const trusted = !address || balances === null || trustDone || balances.trustline;
+  // Signed out, the trustline still shows (as in Agama): it is the step the wallet is for.
+  const trusted = !!address && (balances === null || trustDone || balances.trustline);
   const showActivate = !activated;
   const showTrust = !trusted;
   const steps = (showActivate ? 1 : 0) + (showTrust ? 1 : 0) + 1;
-
-  useEffect(() => {
-    quoteXlmToUsdc(SWAP_XLM)
-      .then((q) => setQuote(q ? Number(q.usdc).toFixed(2) : null))
-      .catch(() => setQuote(null));
-  }, []);
 
   async function run<T>(kind: typeof busy, label: string, fn: () => Promise<T>, ok: (r: T) => { title: string; message?: string; hash?: string }) {
     if (!address) return;
@@ -78,21 +70,12 @@ export function FaucetTab({ onConnect, onGoBaskets }: { onConnect: () => void; o
       setTrustDone(true);
       return { title: "USDC trustline added ✓", message: "Your account can hold Circle's USDC now.", hash };
     });
-  const swap = () =>
-    run("swap", `Swapping ${SWAP_XLM} XLM for USDC…`, () => swapXlmToUsdc(address!, sign, SWAP_XLM), (r) => ({
-      title: `+${Number(r.usdc).toFixed(2)} USDC ✓`,
-      message: "Pick a basket to put it to work.",
-      hash: r.hash,
-    }));
-
   async function copyAddress() {
     if (!address) return;
     await navigator.clipboard.writeText(address);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   }
-
-  const needsSetup = !address || showActivate || showTrust;
 
   return (
     <main className="fc-page">
@@ -135,12 +118,14 @@ export function FaucetTab({ onConnect, onGoBaskets }: { onConnect: () => void; o
             badge
             title="Add the USDC trustline"
             blurb={
-              activated
-                ? "One signature, once, lets your account hold Circle's USDC."
-                : "One signature, once. Waits on the account above: a trustline needs an account to sit on."
+              !address
+                ? "Connect your wallet first. One signature, once, lets your account hold Circle's USDC."
+                : activated
+                  ? "One signature, once, lets your account hold Circle's USDC."
+                  : "One signature, once. Waits on the account above: a trustline needs an account to sit on."
             }
           >
-            <button type="button" className="fc-btn fc-btn-ink" onClick={trust} disabled={busy !== null || !activated}>
+            <button type="button" className="fc-btn fc-btn-ink" onClick={trust} disabled={!address || busy !== null || !activated}>
               {busy === "trust" ? "Signing…" : "Add trustline"}
             </button>
           </StepRow>
@@ -172,16 +157,6 @@ export function FaucetTab({ onConnect, onGoBaskets }: { onConnect: () => void; o
               <ExternalIcon />
             </a>
           </div>
-        </StepRow>
-
-        <StepRow
-          icon={withBase("/logos/rwa/XLM.svg")}
-          title="Or swap testnet XLM for USDC"
-          blurb={`Friendbot XLM, swapped for Circle's USDC on the testnet XLM/USDC pool. ${SWAP_XLM} XLM ≈ ${quote ?? "…"} USDC.`}
-        >
-          <button type="button" className="fc-btn fc-btn-ink" onClick={swap} disabled={busy !== null || needsSetup}>
-            {busy === "swap" ? "Swapping…" : `Swap ${Number(SWAP_XLM).toLocaleString("en-US")} XLM`}
-          </button>
         </StepRow>
 
         <button type="button" className="fc-next" onClick={onGoBaskets}>

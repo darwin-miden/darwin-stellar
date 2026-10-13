@@ -93,7 +93,7 @@ export function App() {
       {connecting ? (
         <SigningInPill />
       ) : (
-        <AnimatedButton onClick={() => setConnectOpen((o) => !o)} className={`h-10 px-[17px] text-[14px] font-medium ${NAV_ACTION_WIDTH}`}>
+        <AnimatedButton active={connectOpen} onClick={() => setConnectOpen((o) => !o)} className={`h-10 px-[17px] text-[14px] font-medium ${NAV_ACTION_WIDTH}`}>
           Connect wallet
         </AnimatedButton>
       )}

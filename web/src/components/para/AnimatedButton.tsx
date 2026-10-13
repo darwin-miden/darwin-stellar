@@ -13,6 +13,8 @@ type CommonProps = {
   borderColor?: string;
   textRestColor?: string;
   textHoverColor?: string;
+  /** Hold the hovered look (e.g. while the menu this button opened is showing). */
+  active?: boolean;
 };
 
 type ButtonProps = CommonProps & {
@@ -32,7 +34,8 @@ type Props = ButtonProps | AnchorProps;
 
 export default function AnimatedButton(props: Props) {
   const { children, className = '', variant = 'primary' } = props;
-  const [hovered, setHovered] = useState(false);
+  const [hoveredRaw, setHovered] = useState(false);
+  const hovered = hoveredRaw || !!props.active;
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lockedRef = useRef(false);
   const insideRef = useRef(false);

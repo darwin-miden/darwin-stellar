@@ -82,7 +82,7 @@ export function App() {
     // network selector + account button, stuck together on the far right
     <span style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: 4 }}>
       <NetworkPill />
-      <NavPillButton onClick={() => void disconnect()} title={address} className={`${NAV_ACTION_WIDTH} !font-mono !text-[12px]`}>
+      <NavPillButton onClick={() => void disconnect()} title={address} className={`${NAV_ACTION_WIDTH} !font-mono !text-[14px]`}>
         {short(address)} ⏻
       </NavPillButton>
     </span>

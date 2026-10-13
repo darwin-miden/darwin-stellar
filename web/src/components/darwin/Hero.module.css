@@ -1,0 +1,204 @@
+/*
+ * Single column, centred, on the warm gradient the shader paints over.
+ * Self-contained on purpose: sharing `.homeHero` with the old two-column hero made the
+ * layout depend on which stylesheet happened to load last.
+ */
+.hero {
+  isolation: isolate;
+  border-radius: var(--radius-hero);
+  /* Stands in for the shader until it paints, so the first frame is already the gold the
+     shader settles on -- it used to flash a bright orange for a beat. */
+  background: radial-gradient(100% 55% at 0 100%, #8f3a0c 0%, #a85e22 28%, #b8803c 48%, #c49a55 72%);
+  display: grid;
+  position: relative;
+  overflow: hidden;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  align-content: center;
+  gap: clamp(20px, 2.2vw, 30px);
+  /* Height comes from the content; the shortcuts keep their slot while prices load. */
+  min-height: 0;
+  padding: clamp(24px, 2.8vw, 38px);
+  text-align: center;
+}
+.hero::after {
+  z-index: 1;
+  content: "";
+  pointer-events: none;
+  background: linear-gradient(90deg, #4a1c0747, #4a1c0708 62%);
+  position: absolute;
+  inset: 0;
+}
+
+.shader {
+  z-index: 0;
+  opacity: 0;
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.14s var(--ease-out);
+  position: absolute;
+  inset: 0;
+}
+.shader[data-ready] {
+  opacity: 1;
+}
+
+.copy {
+  z-index: 2;
+  min-width: 0;
+  position: relative;
+}
+.copy h1 {
+  color: var(--color-text-on-action);
+  font-size: clamp(34px, 4.4vw, 52px);
+  max-width: 610px;
+  margin: 0 auto;
+}
+.copy p {
+  color: #ffffffe0;
+  max-width: 500px;
+  margin: 14px auto 0;
+}
+.actions {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 22px;
+  display: flex;
+}
+/* Paired with `.btn`, which both this scope and the app define: the compound selector wins
+   over either of them, whatever order the stylesheets land in. */
+:global(.btn).secondary {
+  color: var(--color-text-on-action);
+  background: #ffffff1f;
+  border: 1px solid #ffffff8f;
+}
+:global(.btn).secondary:hover {
+  background: #ffffff38;
+  border-color: #ffffffbd;
+}
+
+.slot {
+  z-index: 2;
+  width: 100%;
+  min-width: 0;
+  position: relative;
+}
+
+.row {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+  max-width: 1020px;
+  margin-inline: auto;
+  display: grid;
+}
+
+.chip {
+  background: #5a220633;
+  border: 1px solid #ffffff47;
+  border-radius: var(--radius-xl);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  align-content: start;
+  gap: 8px;
+  /* Fixed, and matched by .chipSkeleton: the hero must not resize when prices land. */
+  height: 132px;
+  padding: 14px 16px;
+  text-align: left;
+  text-decoration: none;
+  display: grid;
+  transition:
+    background var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out);
+}
+
+/* Highlight on hover, but no lift: the card stays where it is. */
+.chip:hover,
+.chip:focus-visible {
+  background: #5a220663;
+  border-color: #ffffffad;
+}
+
+.identity {
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  display: flex;
+}
+
+.name {
+  min-width: 0;
+  display: grid;
+}
+
+.name strong {
+  color: var(--color-text-on-action);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  font-weight: 650;
+  overflow: hidden;
+}
+
+.name small {
+  color: #ffffffc9;
+  font-size: 11.5px;
+}
+
+.values {
+  align-items: baseline;
+  gap: 8px;
+  display: flex;
+}
+
+.nav {
+  color: var(--color-text-on-action);
+  letter-spacing: -0.01em;
+  font-size: 20px;
+  font-weight: 650;
+}
+
+.change {
+  color: #ffffffd6;
+  font-size: 12.5px;
+  font-weight: 650;
+}
+
+.meta {
+  color: #ffffffc4;
+  font-size: 11.5px;
+}
+
+.pending {
+  background: #ffffff38;
+  border-radius: var(--radius-s);
+  width: 54px;
+  height: 14px;
+}
+
+@media (max-width: 900px) {
+  .row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .chip,
+  .chipSkeleton {
+    height: auto;
+    min-height: 104px;
+  }
+}
+
+/* Same box as a chip, so the hero never changes height once prices land. */
+.chipSkeleton {
+  background: #5a22061f;
+  border: 1px solid #ffffff2e;
+  border-radius: var(--radius-xl);
+  height: 132px;
+}

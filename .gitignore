@@ -1,0 +1,10 @@
+target/
+node_modules/
+.next/
+.env
+.env.local
+*.log
+.DS_Store
+.vercel
+*.tsbuildinfo
+test_snapshots/

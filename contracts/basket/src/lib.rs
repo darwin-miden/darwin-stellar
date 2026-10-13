@@ -13,7 +13,7 @@
 
 use soroban_sdk::{
     contract, contractclient, contracterror, contractevent, contractimpl, contracttype, panic_with_error, token::TokenClient,
-    Address, Env, String, Vec,
+    Address, BytesN, ContractExecutable, Env, String, Vec,
 };
 
 const DAY_LEDGERS: u32 = 17_280;
@@ -48,6 +48,7 @@ pub enum Error {
     Slippage = 3,
     NoSupply = 4,
     FeeTooHigh = 5,
+    Paused = 6,
 }
 
 /// A buy: `usdc_in` spent (fee included), `shares` minted to `user`.
@@ -75,6 +76,7 @@ pub struct Sold {
 enum DataKey {
     Config,
     Fees,
+    Paused,
 }
 
 #[contracttype]
@@ -214,6 +216,30 @@ impl Basket {
         e.storage().instance().set(&DataKey::Fees, &Fees { buy_bps, sell_bps, fee_to });
     }
 
+    /// Stop new buys (sells always stay open: holders can exit at any time).
+    pub fn set_paused(e: Env, paused: bool) {
+        cfg(&e).admin.require_auth();
+        bump(&e);
+        e.storage().instance().set(&DataKey::Paused, &paused);
+    }
+
+    pub fn paused(e: Env) -> bool {
+        e.storage().instance().get(&DataKey::Paused).unwrap_or(false)
+    }
+
+    pub fn set_admin(e: Env, new_admin: Address) {
+        let mut c = cfg(&e);
+        c.admin.require_auth();
+        bump(&e);
+        c.admin = new_admin;
+        e.storage().instance().set(&DataKey::Config, &c);
+    }
+
+    pub fn upgrade(e: Env, wasm_hash: BytesN<32>) {
+        cfg(&e).admin.require_auth();
+        e.deployer().update_current_contract(ContractExecutable::Wasm(wasm_hash));
+    }
+
     pub fn nav(e: Env) -> Nav {
         let c = cfg(&e);
         let l = legs(&e, &c);
@@ -252,6 +278,9 @@ impl Basket {
         user.require_auth();
         if usdc_in <= 0 {
             panic_with_error!(&e, Error::ZeroAmount);
+        }
+        if Self::paused(e.clone()) {
+            panic_with_error!(&e, Error::Paused);
         }
         bump(&e);
         let c = cfg(&e);

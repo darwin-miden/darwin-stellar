@@ -289,3 +289,30 @@ fn buys_and_sells_emit_events() {
     assert_eq!(evs, [sold.to_xdr(&w.e, &w.basket)]);
     assert_eq!(TClient::new(&w.e, &w.usdc).balance(&alice), 900 * ONE + usdc_out);
 }
+
+#[test]
+fn pause_stops_buys_but_never_sells() {
+    let w = world();
+    let b = BasketClient::new(&w.e, &w.basket);
+    let alice = Address::generate(&w.e);
+    TClient::new(&w.e, &w.usdc).faucet(&alice);
+    let s = b.buy(&alice, &(100 * ONE), &0);
+    b.set_paused(&true);
+    assert!(b.paused());
+    assert_eq!(b.try_buy(&alice, &(100 * ONE), &0), Err(Ok(Error::Paused.into())));
+    assert!(b.sell(&alice, &s, &0) > 0, "holders can always exit");
+    b.set_paused(&false);
+    b.buy(&alice, &(100 * ONE), &0);
+}
+
+#[test]
+fn admin_handover() {
+    let w = world();
+    let b = BasketClient::new(&w.e, &w.basket);
+    let next = Address::generate(&w.e);
+    b.set_admin(&next);
+    assert_eq!(b.config().admin, next);
+    w.e.set_auths(&[]);
+    assert!(b.try_set_paused(&true).is_err());
+    assert!(b.try_set_admin(&w.admin).is_err());
+}

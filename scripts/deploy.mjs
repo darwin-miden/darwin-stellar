@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Deploy the full Darwin stack to Stellar testnet with the stellar CLI:
-//   test USDC → oracle (Reflector feeds) → market → constituents → baskets.
+//   oracle (Reflector feeds) → market → constituents → baskets, all settling in Circle's USDC.
+// The market's USDC reserve is seeded with real Circle USDC, swapped from friendbot XLM.
 // Writes deployments/testnet.json and web/src/config/testnet.json (read by the web app).
 //
 //   node scripts/deploy.mjs            # source identity: darwin-stellar-admin
@@ -9,14 +10,15 @@ import { execFileSync } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
 import { BASKETS, CONSTITUENTS, LAUNCH_NAV_USD, REFLECTOR } from "./catalog.mjs";
+import { CIRCLE, ensureTrustline, freshUsdcAccount, transferUsdc } from "./circle.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const WASM = join(ROOT, "contracts/target/wasm32v1-none/release");
 const SOURCE = process.env.SOURCE ?? "darwin-stellar-admin";
 const NET = ["--source", SOURCE, "--network", "testnet"];
 const DEC = 7; // USDC + basket shares (Stellar native precision)
-const ONE = 10n ** BigInt(DEC);
 const ASSET_DEC = 12; // constituents: keeps a $1 share's BTC leg precise
 const ASSET_ONE = 10n ** BigInt(ASSET_DEC);
 
@@ -34,6 +36,9 @@ const invoke = (id, fn, args = [], send = true) =>
   cli(["contract", "invoke", "--id", id, ...NET, ...(send ? [] : ["--send=no"]), "--", fn, ...args]);
 
 const admin = cli(["keys", "address", SOURCE]);
+const { Keypair } = createRequire(join(ROOT, "web/package.json"))("@stellar/stellar-sdk");
+const adminKp = Keypair.fromSecret(cli(["keys", "show", SOURCE]));
+const SEED_ACCOUNTS = Number(process.env.SEED_ACCOUNTS ?? 3); // × ~8,500 USDC each
 console.log(`admin ${admin}`);
 
 console.log("uploading wasm…");
@@ -43,7 +48,10 @@ const token = (alias, name, symbol, faucet, tokenAdmin = admin, decimals = DEC) 
   deploy(H.token, alias, ["--admin", tokenAdmin, "--decimals", String(decimals), "--name", name, "--symbol", symbol, "--faucet_amount", String(faucet)]);
 
 console.log("core…");
-const usdc = token("darwin-usdc", "Darwin Test USDC", "USDC", 1000n * ONE);
+const usdc = CIRCLE.sac;
+console.log(`  ${"circle-usdc (SAC)".padEnd(24)} ${usdc}`);
+// The admin receives the protocol fees: a classic account needs a USDC trustline for that.
+if (await ensureTrustline(adminKp)) console.log("  admin: USDC trustline added");
 const oracle = deploy(H.oracle, "darwin-oracle", ["--admin", admin, "--max_age_secs", "3600"]);
 const market = deploy(H.market, "darwin-market", ["--admin", admin, "--usdc", usdc, "--oracle", oracle, "--spread_bps", "10"]);
 
@@ -68,9 +76,15 @@ for (const c of CONSTITUENTS) {
   console.log(`    ${c.sym.padEnd(8)} $${(Number(price) / 1e14).toFixed(4)}`);
 }
 
-console.log("seeding market reserve (10M USDC)…");
-invoke(usdc, "mint", ["--to", market, "--amount", (10_000_000n * ONE).toString()]);
+console.log(`seeding market reserve with Circle USDC (${SEED_ACCOUNTS} friendbot accounts)…`);
+for (let k = 0; k < SEED_ACCOUNTS; k++) {
+  const { kp, got } = await freshUsdcAccount(9_500);
+  const base = BigInt(Math.floor(Number(got) * 0.995 * 1e7)); // leave the swap's rounding behind
+  await transferUsdc(kp, market, base);
+  console.log(`  +${(Number(base) / 1e7).toFixed(2)} USDC from ${kp.publicKey().slice(0, 8)}…`);
+}
 invoke(market, "sync");
+console.log(`  reserve ${(Number(invoke(market, "reserve", [], false).replace(/"/g, "")) / 1e7).toFixed(2)} USDC`);
 
 console.log("baskets…");
 const baskets = [];
@@ -101,6 +115,7 @@ const out = {
   wasm: H,
   reflector: REFLECTOR,
   usdc,
+  usdcIssuer: CIRCLE.issuer,
   oracle,
   market,
   assets,

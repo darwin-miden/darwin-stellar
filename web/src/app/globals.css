@@ -883,14 +883,14 @@ details > summary:hover {
 .cx-newto:hover b { color: var(--orange); }
 
 /* ── connect menu (WalletMenu) ───────────────────────────────────────────────────────── */
-.wm-anchor { position: relative; display: inline-flex; }
+.wm-anchor { position: relative; display: inline-flex; align-items: center; gap: 8px; }
 .wm-menu {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 8px);
+  left: 0;
   right: 0;
   z-index: 60;
-  width: 210px;
-  padding: 6px;
+  padding: 5px;
   background: var(--paper);
   border: 1px solid var(--rule);
   border-radius: 16px;
@@ -904,9 +904,9 @@ details > summary:hover {
 .wm-item {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  padding: 8px 10px;
+  padding: 7px 9px;
   border-radius: 10px;
   text-align: left;
   color: var(--ink);
@@ -916,7 +916,7 @@ details > summary:hover {
 .wm-item:focus-visible { outline: 2px solid var(--orange); outline-offset: -2px; }
 .wm-item:disabled { cursor: default; }
 .wm-item:disabled:not([aria-busy="true"]) { opacity: 0.5; }
-.wm-icon { width: 24px; height: 24px; border-radius: 6px; object-fit: contain; flex: none; }
+.wm-icon { width: 22px; height: 22px; border-radius: 6px; object-fit: contain; flex: none; }
 .wm-name { flex: 1; font-size: 14px; font-weight: 400; }
 .wm-spin { width: 12px; height: 12px; border: 2px solid var(--rule-2); border-top-color: var(--ink); border-radius: 50%; }
 .wm-note { display: block; padding: 8px 10px; font-size: 13px; color: var(--ink-3); }

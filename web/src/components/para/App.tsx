@@ -87,19 +87,18 @@ export function App() {
       </NavPillButton>
     </span>
   ) : (
-    <>
+    // The menu spans exactly the network pill + Connect wallet, right below them.
+    <span className="wm-anchor">
       <NetworkPill />
-      <span className="wm-anchor">
-        {connecting ? (
-          <SigningInPill />
-        ) : (
-          <AnimatedButton onClick={() => setConnectOpen((o) => !o)} className={`h-10 px-[17px] text-[14px] font-medium ${NAV_ACTION_WIDTH}`}>
-            Connect wallet
-          </AnimatedButton>
-        )}
-        {connectOpen && <WalletMenu pending={choosing} onPick={(id) => void choose(id)} onClose={() => !choosing && setConnectOpen(false)} />}
-      </span>
-    </>
+      {connecting ? (
+        <SigningInPill />
+      ) : (
+        <AnimatedButton onClick={() => setConnectOpen((o) => !o)} className={`h-10 px-[17px] text-[14px] font-medium ${NAV_ACTION_WIDTH}`}>
+          Connect wallet
+        </AnimatedButton>
+      )}
+      {connectOpen && <WalletMenu pending={choosing} onPick={(id) => void choose(id)} onClose={() => !choosing && setConnectOpen(false)} />}
+    </span>
   );
 
   return (

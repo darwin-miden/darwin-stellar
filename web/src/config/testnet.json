@@ -2,7 +2,7 @@
   "network": "testnet",
   "rpcUrl": "https://soroban-testnet.stellar.org",
   "passphrase": "Test SDF Network ; September 2015",
-  "deployedAt": "2026-10-13T19:53:29.962Z",
+  "deployedAt": "2026-10-13T21:26:25.978Z",
   "admin": "GBXXJQJQLAZ7ENWVU2GBYVFPS5VRN7TN7YDHV7FFPPGMCE4XSTXXH23X",
   "wasm": {
     "token": "80111e8121e95e866cb455d6c13987f9b2581db9cf29aa307ed84278c207d439",
@@ -14,9 +14,10 @@
     "crypto": "CCYOZJCOPG34LLQQ7N24YXBM7LL62R7ONMZ3G6WZAAYPB5OYKOMJRN63",
     "fiat": "CCSSOHTBL3LEWUCBBEB5NJFC2OKFRC74OWEIJIZLRJBGAAU4VMU5NV4W"
   },
-  "usdc": "CBOOGYIGZYSJMBU5I6RCDZ3VLRBCEHNWAYM3ZRXPFGVUXOBXSBYBJQ54",
-  "oracle": "CDZUGO3CVERPKFFGQMOV4V2JMRN2KW3QCRAPTOWJXJSHTZDXU7GJQZ4O",
-  "market": "CDGRAYOW7GU3NQRB2OCGTQWOZ74DVXQG6PRXFPHLWBXHJA36DAC2WNXS",
+  "usdc": "CBIELTK6YBZJU5UP2WWQEUCYKLPU6AUNZ2BQ4WWFEIE3USCIHMXQDAMA",
+  "usdcIssuer": "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5",
+  "oracle": "CBPRZCN5KOILNH4LN54JXZ737HKAOKVK534YM3IE5N643FQYX7EKEOGU",
+  "market": "CCUFULJ34BGO2DQOGHZLNEWRIWIWMR425JG5PHAVQYLKUFVGE3TNDD2A",
   "assets": {
     "USDY": {
       "sym": "USDY",
@@ -27,10 +28,10 @@
         "fixed": "110000000000000"
       },
       "apyBps": 450,
-      "id": "CAXDSVLIMEZQWAKK7TQD6EEWNNKYZCZ5VX3TTMNAKBE4F4KMF3VI2Q62",
+      "id": "CCARO3KRKTJ7LN3GMR35BYYTA65RRWAWDOKCPYPD72WA6GM5JXTMWHFN",
       "decimals": 12,
-      "launchPrice": "110000004394977",
-      "t0": 1791920944
+      "launchPrice": "110000003453196",
+      "t0": 1791926440
     },
     "BENJI": {
       "sym": "BENJI",
@@ -41,10 +42,10 @@
         "fixed": "100000000000000"
       },
       "apyBps": 410,
-      "id": "CCRBCGZ36RIKEI6762WBM7DR2A6D55CKF7ICJCA3YJG5LXASA47CVWCA",
+      "id": "CA4FNWN37NQILTMJL67NIT5YHPZ5DLZMFVEANLT5JLEHOVAYZNZA3PIG",
       "decimals": 12,
-      "launchPrice": "100000006240487",
-      "t0": 1791920944
+      "launchPrice": "100000005460426",
+      "t0": 1791926440
     },
     "EUTBL": {
       "sym": "EUTBL",
@@ -55,10 +56,10 @@
         "fiat": "EUR"
       },
       "apyBps": 200,
-      "id": "CANDNBRE5IHVMZT7GYR2BFGF64ETNFBPA2FXLKUXWLXCG4ZKD7E7PF4Q",
+      "id": "CDWEAMP5ZJ2PWUYAR3TRM4V7OVNS2CK4WY6YHANUPUVN5KZZYGC2PXP7",
       "decimals": 12,
-      "launchPrice": "111880004824860",
-      "t0": 1791920944
+      "launchPrice": "111880004044368",
+      "t0": 1791926440
     },
     "USTRY": {
       "sym": "USTRY",
@@ -69,10 +70,10 @@
         "fixed": "100000000000000"
       },
       "apyBps": 400,
-      "id": "CAC7GUBUTDILBV2XYLUJKFQAASQ2VU7MIVLSWZNO6P4GSFF3VNCOINMD",
+      "id": "CCYO7K5ANILYYPKUPHV4O3ZV2G7PUF2WRC7SIMOPTYATDUB5UAN7UXKM",
       "decimals": 12,
-      "launchPrice": "100000010527650",
-      "t0": 1791920944
+      "launchPrice": "100000009132420",
+      "t0": 1791926440
     },
     "GILTS": {
       "sym": "GILTS",
@@ -83,10 +84,10 @@
         "fiat": "GBP"
       },
       "apyBps": 420,
-      "id": "CALTLKKB64OACBRKGGZQQZJH5N2VJ6CYD2J6WTVSADQW4MJDY7JJXIKH",
+      "id": "CDIK5RNGK76C6YW2ZI7JZUFSVGE24DLPQCO4ILXIDCKBS5NJU7KIZURC",
       "decimals": 12,
-      "launchPrice": "132465090394639",
-      "t0": 1791920944
+      "launchPrice": "132465089336129",
+      "t0": 1791926440
     },
     "CETES": {
       "sym": "CETES",
@@ -97,10 +98,10 @@
         "fiat": "MXN"
       },
       "apyBps": 900,
-      "id": "CCPDIBII5FFQIL3DVQ5UDQEOEYZHYXDUHD6RZ4LDVX7BYKA7XH7Y6A7P",
+      "id": "CB5YKZNKXUA3GBBSRZMSAAGWK6RI3DTH6OQFWKE6S6NF3USQK4LHNVNI",
       "decimals": 12,
-      "launchPrice": "5454210469490",
-      "t0": 1791920944
+      "launchPrice": "5454210376096",
+      "t0": 1791926440
     },
     "TESOURO": {
       "sym": "TESOURO",
@@ -111,10 +112,10 @@
         "fiat": "BRL"
       },
       "apyBps": 1400,
-      "id": "CD2URMGYKXYW5FI2JHJ6ZOUMUO4QXQ5BDZQ3HIVZSXOHGL2BGP6632CJ",
+      "id": "CAJE52XYN7JNWNHUI6ECRTG37L2SJDE6TH77MF5WPN5SITURIFD6QKHM",
       "decimals": 12,
-      "launchPrice": "19934087493632",
-      "t0": 1791920944
+      "launchPrice": "19934087405137",
+      "t0": 1791926440
     },
     "GOLD": {
       "sym": "GOLD",
@@ -125,10 +126,10 @@
         "fiat": "XAU"
       },
       "apyBps": 0,
-      "id": "CDWRXLUCXXWJTXHV5VMR3AWTIRXKFRCDSJS7YH5QLENLXJKBVK6DENJK",
+      "id": "CAJ7WRUE7ZM4ELCKDTSGJWAA4UT6EICOBJZ7LQGV6TQGAICRFKRYW3DW",
       "decimals": 12,
       "launchPrice": "417706109420935728",
-      "t0": 1791920944
+      "t0": 1791926440
     },
     "BTC": {
       "sym": "BTC",
@@ -139,10 +140,10 @@
         "crypto": "BTC"
       },
       "apyBps": 0,
-      "id": "CDLJXJMPJ6P23ZZPELQG6PN7LURCNEH6WSZ5C6ZWPZY53FBRXFWLBAJE",
+      "id": "CDIK45YWNNV7FL4X4PQU356AER7BULQGMSJRBFUTOMWRBNUHMXMYS7IR",
       "decimals": 12,
-      "launchPrice": "8308579093579716715",
-      "t0": 1791920944
+      "launchPrice": "8330261276280267068",
+      "t0": 1791926440
     },
     "ETH": {
       "sym": "ETH",
@@ -153,10 +154,10 @@
         "crypto": "ETH"
       },
       "apyBps": 0,
-      "id": "CDZ7PSOQFVCOBYP42ZBZ5LKLDJ727HLCB2MAMENWY5BACEO5T72GX2IU",
+      "id": "CCCEXPKH5W2FUSKCFKTZK7XB6NEWO5CMJINUY3457HYNXDXVBMFS47FC",
       "decimals": 12,
-      "launchPrice": "250110686248864835",
-      "t0": 1791920944
+      "launchPrice": "250752887867478122",
+      "t0": 1791926440
     },
     "XLM": {
       "sym": "XLM",
@@ -167,10 +168,10 @@
         "crypto": "XLM"
       },
       "apyBps": 0,
-      "id": "CA5DIGK3HXHVXN5KCFQFNO2C6MSDTRDBKXZZ5BCOLNO27OJ7TTKVZIPO",
+      "id": "CB5EBCDRV3MLCEL3BGF7A3TFYXOZ3BSWFU74OSVMIPGP3ISTOPSEE3EJ",
       "decimals": 12,
-      "launchPrice": "19203730148415",
-      "t0": 1791920944
+      "launchPrice": "19159290864631",
+      "t0": 1791926440
     }
   },
   "baskets": [
@@ -184,32 +185,32 @@
         "EUTBL": 2500,
         "GILTS": 2000
       },
-      "vault": "CD2HKGKT6H3SI7NBKL3HQUWIONLUBE5CVRZDXXP2CLIIOIBIQTJJJ3SH",
-      "shares": "CDAFCXFVPWNBLPZGWDGQG4O2LTJKATLVHAPNOD3H4J5MIDCNPAGMUMSS",
+      "vault": "CDHGLEDZM6OC6OIQU6HY77TEA6GPZ6F2PBTPLFKRVRK6TSYAIKONCS3D",
+      "shares": "CBEZ4IGROURJZX3KRCSFFAH4UFHYIJDVNESOYXBBMJIKEM4JHEJYJX2V",
       "constituents": [
         {
           "sym": "USDY",
-          "token": "CAXDSVLIMEZQWAKK7TQD6EEWNNKYZCZ5VX3TTMNAKBE4F4KMF3VI2Q62",
+          "token": "CCARO3KRKTJ7LN3GMR35BYYTA65RRWAWDOKCPYPD72WA6GM5JXTMWHFN",
           "weightBps": 3000,
-          "units": "272727261830"
+          "units": "272727264165"
         },
         {
           "sym": "BENJI",
-          "token": "CCRBCGZ36RIKEI6762WBM7DR2A6D55CKF7ICJCA3YJG5LXASA47CVWCA",
+          "token": "CA4FNWN37NQILTMJL67NIT5YHPZ5DLZMFVEANLT5JLEHOVAYZNZA3PIG",
           "weightBps": 2500,
-          "units": "249999984398"
+          "units": "249999986348"
         },
         {
           "sym": "EUTBL",
-          "token": "CANDNBRE5IHVMZT7GYR2BFGF64ETNFBPA2FXLKUXWLXCG4ZKD7E7PF4Q",
+          "token": "CDWEAMP5ZJ2PWUYAR3TRM4V7OVNS2CK4WY6YHANUPUVN5KZZYGC2PXP7",
           "weightBps": 2500,
-          "units": "223453690756"
+          "units": "223453692315"
         },
         {
           "sym": "GILTS",
-          "token": "CALTLKKB64OACBRKGGZQQZJH5N2VJ6CYD2J6WTVSADQW4MJDY7JJXIKH",
+          "token": "CDIK5RNGK76C6YW2ZI7JZUFSVGE24DLPQCO4ILXIDCKBS5NJU7KIZURC",
           "weightBps": 2000,
-          "units": "150983175570"
+          "units": "150983176776"
         }
       ]
     },
@@ -221,20 +222,20 @@
         "CETES": 5000,
         "TESOURO": 5000
       },
-      "vault": "CDI22FRBZJAFUITLKKY6ZQEADNQT5PVYGI2RU46G6KEJNXTVAF2LAYNP",
-      "shares": "CAOL6U4C5CKYXH5AW4UL6HZYEBTRDLULSDQXWB5QV7CJT6NQ4QZR6SON",
+      "vault": "CD32W5DZILHE57FGUE4MFEMKHTSGXCEPB4SARKJOJCAGFX7CAWV2DVZI",
+      "shares": "CCITRDNUT6J7UEMSO4YCUR5BXHMT2RACWBXF36MCZSVKBZQJ72YLCYD6",
       "constituents": [
         {
           "sym": "CETES",
-          "token": "CCPDIBII5FFQIL3DVQ5UDQEOEYZHYXDUHD6RZ4LDVX7BYKA7XH7Y6A7P",
+          "token": "CB5YKZNKXUA3GBBSRZMSAAGWK6RI3DTH6OQFWKE6S6NF3USQK4LHNVNI",
           "weightBps": 5000,
-          "units": "9167229662238"
+          "units": "9167229819211"
         },
         {
           "sym": "TESOURO",
-          "token": "CD2URMGYKXYW5FI2JHJ6ZOUMUO4QXQ5BDZQ3HIVZSXOHGL2BGP6632CJ",
+          "token": "CAJE52XYN7JNWNHUI6ECRTG37L2SJDE6TH77MF5WPN5SITURIFD6QKHM",
           "weightBps": 5000,
-          "units": "2508266305943"
+          "units": "2508266317078"
         }
       ]
     },
@@ -247,26 +248,26 @@
         "ETH": 3000,
         "XLM": 2000
       },
-      "vault": "CDMAVGRUJOLW6FSWD2LNVNU36K5T6WUC5DM7PFRTGJIPXW6224DISKWC",
-      "shares": "CBSYLZMTZXCCBG5SKZJ5SNFRHMFN55ITPXJIBSH7HY4GELXCAF54S7W4",
+      "vault": "CB2X3TUXEHOQ4NIN4YQVMITVCTGRWEOWTWSFQLGQTUVVJQXOIFOT7YHB",
+      "shares": "CD3EPMYXMVOCWJXRO6JEYEXZU4ZAS73FE5WLDCLT6XJIFXXHO2E3CSAN",
       "constituents": [
         {
           "sym": "BTC",
-          "token": "CDLJXJMPJ6P23ZZPELQG6PN7LURCNEH6WSZ5C6ZWPZY53FBRXFWLBAJE",
+          "token": "CDIK45YWNNV7FL4X4PQU356AER7BULQGMSJRBFUTOMWRBNUHMXMYS7IR",
           "weightBps": 5000,
-          "units": "6017876"
+          "units": "6002212"
         },
         {
           "sym": "ETH",
-          "token": "CDZ7PSOQFVCOBYP42ZBZ5LKLDJ727HLCB2MAMENWY5BACEO5T72GX2IU",
+          "token": "CCCEXPKH5W2FUSKCFKTZK7XB6NEWO5CMJINUY3457HYNXDXVBMFS47FC",
           "weightBps": 3000,
-          "units": "119946894"
+          "units": "119639698"
         },
         {
           "sym": "XLM",
-          "token": "CA5DIGK3HXHVXN5KCFQFNO2C6MSDTRDBKXZZ5BCOLNO27OJ7TTKVZIPO",
+          "token": "CB5EBCDRV3MLCEL3BGF7A3TFYXOZ3BSWFU74OSVMIPGP3ISTOPSEE3EJ",
           "weightBps": 2000,
-          "units": "1041464332472"
+          "units": "1043879971409"
         }
       ]
     },
@@ -281,38 +282,38 @@
         "EUTBL": 1500,
         "CETES": 1000
       },
-      "vault": "CDGARSXJHM3WJDVRMFCHWPVDRAL6FRCYQKU2FY5TUWY5DAQTCULWAPNY",
-      "shares": "CDRLJG266CMYH7ZVJDSBFWV5ULQVY74FSYLOECAXWFFDGQKRJF7X5PCU",
+      "vault": "CD2PRGK2DBWTQ5GYXDD47ZVL4ETJ2ATILPY6MZTVXKEB3TOLLQ2VQ35K",
+      "shares": "CCREIZF7IRZ3647JV2NG6ICFQARTVWDM4QCFDV5FOHD77HMIQGKNZYXM",
       "constituents": [
         {
           "sym": "USTRY",
-          "token": "CAC7GUBUTDILBV2XYLUJKFQAASQ2VU7MIVLSWZNO6P4GSFF3VNCOINMD",
+          "token": "CCYO7K5ANILYYPKUPHV4O3ZV2G7PUF2WRC7SIMOPTYATDUB5UAN7UXKM",
           "weightBps": 3000,
-          "units": "299999968417"
+          "units": "299999972602"
         },
         {
           "sym": "GOLD",
-          "token": "CDWRXLUCXXWJTXHV5VMR3AWTIRXKFRCDSJS7YH5QLENLXJKBVK6DENJK",
+          "token": "CAJ7WRUE7ZM4ELCKDTSGJWAA4UT6EICOBJZ7LQGV6TQGAICRFKRYW3DW",
           "weightBps": 2500,
           "units": "59850692"
         },
         {
           "sym": "BTC",
-          "token": "CDLJXJMPJ6P23ZZPELQG6PN7LURCNEH6WSZ5C6ZWPZY53FBRXFWLBAJE",
+          "token": "CDIK45YWNNV7FL4X4PQU356AER7BULQGMSJRBFUTOMWRBNUHMXMYS7IR",
           "weightBps": 2000,
-          "units": "2407150"
+          "units": "2400885"
         },
         {
           "sym": "EUTBL",
-          "token": "CANDNBRE5IHVMZT7GYR2BFGF64ETNFBPA2FXLKUXWLXCG4ZKD7E7PF4Q",
+          "token": "CDWEAMP5ZJ2PWUYAR3TRM4V7OVNS2CK4WY6YHANUPUVN5KZZYGC2PXP7",
           "weightBps": 1500,
-          "units": "134072214454"
+          "units": "134072215389"
         },
         {
           "sym": "CETES",
-          "token": "CCPDIBII5FFQIL3DVQ5UDQEOEYZHYXDUHD6RZ4LDVX7BYKA7XH7Y6A7P",
+          "token": "CB5YKZNKXUA3GBBSRZMSAAGWK6RI3DTH6OQFWKE6S6NF3USQK4LHNVNI",
           "weightBps": 1000,
-          "units": "1833445932447"
+          "units": "1833445963842"
         }
       ]
     }

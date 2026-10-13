@@ -79,8 +79,8 @@ export function App() {
   }
 
   const right = address ? (
-    // network selector + account button, stuck together on the far right
-    <span style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: 4 }}>
+    // network selector + account button: the same box as signed out, so nothing shifts on connect
+    <span className="wm-anchor">
       <NetworkPill />
       <NavPillButton onClick={() => void disconnect()} title={address} className={`${NAV_ACTION_WIDTH} !font-mono !text-[14px]`}>
         {short(address)} ⏻

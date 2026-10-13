@@ -1,9 +1,10 @@
 "use client";
 
 /**
- * Wallet connection. Two ways in, mirroring the Miden app's "Para / native wallet" split:
- *   - "kit"  → any Stellar wallet through the Stellar Wallets Kit (Freighter, xBull, Lobstr,
- *              Albedo, Hana, Rabet, …). The wallet signs every transaction.
+ * Wallet connection. Two ways in:
+ *   - "kit"  → a Stellar wallet found on this device through the Stellar Wallets Kit (Freighter,
+ *              xBull, Lobstr, Albedo, Hana, Rabet, …), picked from `listWallets()`. The wallet
+ *              signs every transaction.
  *   - "demo" → an in-browser testnet key (kept in localStorage), funded by friendbot. No
  *              extension needed: the fastest way to try a basket.
  * Either way the app gets the same `{ address, sign }` and never cares which one it is.
@@ -17,13 +18,20 @@ import { ensureFunded, type Signer } from "./stellar";
 
 export type ConnectMethod = "kit" | "demo";
 
+/** A wallet the kit can reach from this browser right now (extension installed, or web-based). */
+export interface DeviceWallet {
+  id: string;
+  name: string;
+  icon: string;
+}
+
 interface WalletState {
   address: string | null;
   method: ConnectMethod | null;
   walletName: string | null;
   connecting: boolean;
   sign: Signer;
-  connect: (m: ConnectMethod) => Promise<void>;
+  connect: (m: ConnectMethod, walletId?: string) => Promise<void>;
   disconnect: () => Promise<void>;
 }
 
@@ -47,6 +55,13 @@ function loadKit(): Promise<Kit> {
   return kitPromise;
 }
 
+/** Wallets available on this device, in the kit's order. */
+export async function listWallets(): Promise<DeviceWallet[]> {
+  const kit = await loadKit();
+  const all = await kit.refreshSupportedWallets();
+  return all.filter((w) => w.isAvailable).map(({ id, name, icon }) => ({ id, name, icon }));
+}
+
 function demoKeypair(): Keypair {
   let secret = localStorage.getItem(DEMO_KEY);
   if (!secret) {
@@ -62,7 +77,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const [walletName, setWalletName] = useState<string | null>(null);
   const [connecting, setConnecting] = useState(false);
 
-  const connect = useCallback(async (m: ConnectMethod) => {
+  const connect = useCallback(async (m: ConnectMethod, walletId?: string) => {
     setConnecting(true);
     try {
       let a: string;
@@ -71,7 +86,12 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         setWalletName("Demo wallet");
       } else {
         const kit = await loadKit();
-        a = (await kit.authModal()).address;
+        if (walletId) {
+          kit.setWallet(walletId);
+          a = (await kit.fetchAddress()).address;
+        } else {
+          a = (await kit.authModal()).address;
+        }
         setWalletName(kit.selectedModule?.productName ?? "Stellar wallet");
       }
       // Gas onboarding: a fresh testnet account gets XLM from friendbot before its first trade.

@@ -55,11 +55,17 @@ function loadKit(): Promise<Kit> {
   return kitPromise;
 }
 
+// GHOSTSIG reports itself available on every browser (it only needs window.open), so it would
+// show up for people who never installed it.
+const HIDDEN_WALLETS = new Set(["ghostsig"]);
+
 /** Wallets available on this device, in the kit's order. */
 export async function listWallets(): Promise<DeviceWallet[]> {
   const kit = await loadKit();
   const all = await kit.refreshSupportedWallets();
-  return all.filter((w) => w.isAvailable).map(({ id, name, icon }) => ({ id, name, icon }));
+  return all
+    .filter((w) => w.isAvailable && !HIDDEN_WALLETS.has(w.id.toLowerCase()))
+    .map(({ id, name, icon }) => ({ id, name, icon }));
 }
 
 function demoKeypair(): Keypair {

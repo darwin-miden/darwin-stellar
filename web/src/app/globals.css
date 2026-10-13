@@ -972,3 +972,10 @@ details > summary:hover {
 .fc-next:hover .fc-next-arrow { transform: translateX(2px); }
 .wm-glyph { display: flex; width: 22px; height: 22px; flex: none; align-items: center; justify-content: center; color: var(--ink-2); }
 .wm-head { padding: 6px 9px 4px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-3); }
+.fc-mark-wrap { position: relative; width: 40px; height: 40px; flex: none; }
+.fc-badge {
+  position: absolute; right: -2px; bottom: -2px; display: flex; width: 18px; height: 18px;
+  align-items: center; justify-content: center; border-radius: 50%;
+  background: var(--ink); color: var(--paper); box-shadow: 0 0 0 2px var(--paper);
+}
+.fc-badge svg { width: 11px; height: 11px; stroke-width: 3; }

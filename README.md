@@ -99,7 +99,7 @@ cd web && npm install && npm run dev   # http://localhost:3050/stellar
 
 The index charts draw each constituent's history (Yahoo: BTC-USD, GC=F, EURUSD=X, MXNUSD=X…, served by `/api/history`) × the instrument's yield index, exactly as the oracle prices it on-chain.
 
-In the app, connect any Stellar wallet (Freighter, xBull, Lobstr, Albedo, Hana, Rabet… through the Stellar Wallets Kit). Then open the **Faucet** tab: add the USDC trustline, and get Circle USDC from faucet.circle.com (20 every 2 hours) or swap testnet XLM for it in one click. Then buy a basket.
+In the app, connect any Stellar wallet (Freighter, xBull, Lobstr, Albedo, Hana, Rabet… through the Stellar Wallets Kit). Then open the **Faucet** tab: add the USDC trustline, and get Circle USDC from faucet.circle.com (20 every 2 hours). Then buy a basket.
 
 ## End-to-end check
 
